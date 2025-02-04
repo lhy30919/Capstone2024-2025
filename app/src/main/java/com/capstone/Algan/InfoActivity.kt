@@ -13,7 +13,7 @@ class InfoActivity : AppCompatActivity() {
         supportActionBar?.hide()
         // User 객체 생성
         val user = User(
-            id = 1,
+
             username = "테스트이름",
             password = "password123",
             role = "사업주",
