@@ -32,8 +32,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:layout_marginTop="10dp"
         android:padding="8dp">
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -76,17 +76,6 @@
                 android:textColor="@color/primary_text" />
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/idEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:hint="아이디ㄴ 삭제 ㄴ 예정"
-                android:textColorHint="@color/secondary_text"
-                android:background="@drawable/edittext_background"
-                android:padding="12dp"
-                android:textColor="@color/primary_text" />
-
-            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/phoneEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -108,56 +97,50 @@
                 android:background="@drawable/edittext_background"
                 android:padding="12dp"
                 android:textColor="@color/primary_text" />
+
+            <!-- 사업주/고용인 버튼 그룹 -->
+            <RadioGroup
+                android:id="@+id/roleGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="16dp">
+
+                <RadioButton
+                    android:id="@+id/employer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="사업주"
+                    android:buttonTint="@color/primary_color" />
+
+                <RadioButton
+                    android:id="@+id/employee"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="고용인"
+                    android:buttonTint="@color/primary_color"
+                    android:layout_marginStart="16dp" />
+            </RadioGroup>
+
+            <!-- 회원가입 버튼 -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/signupButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="10dp"
+                android:text="회원가입"
+                android:textStyle="bold"
+                android:backgroundTint="@color/pastel_blue"
+                android:textColor="@android:color/white"
+                android:elevation="4dp"
+                app:cornerRadius="8dp" />
         </LinearLayout>
     </ScrollView>
-
-
-    <!-- 고정된 하단 영역: 사업주 고용인 라디오 버튼 -->
-    <RadioGroup
-        android:id="@+id/roleGroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginBottom="16dp">
-
-        <RadioButton
-            android:id="@+id/employer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="사업주"
-            android:buttonTint="@color/primary_color" />
-
-        <RadioButton
-            android:id="@+id/employee"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="고용인"
-            android:buttonTint="@color/primary_color"
-            android:layout_marginStart="16dp" />
-    </RadioGroup>
-
-    <Button
-        android:id="@+id/signupButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="회원가입"
-        android:layout_marginTop="16dp" />
 
     <!-- 추가된 여백 -->
     <View
         android:layout_width="match_parent"
         android:layout_height="16dp" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/signup_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="회원가입"
-        android:textStyle="bold"
-        android:backgroundTint="@color/pastel_blue"
-        android:textColor="@android:color/white"
-        android:elevation="4dp"
-        app:cornerRadius="8dp" />
 </LinearLayout>

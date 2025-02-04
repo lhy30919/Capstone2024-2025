@@ -19,6 +19,9 @@ class SignUpActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
 
+        // ActionBar 숨기기
+        supportActionBar?.hide()
+
         // FirebaseAuth 및 Realtime Database 초기화
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance()
