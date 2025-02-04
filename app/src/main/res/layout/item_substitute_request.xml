@@ -17,9 +17,9 @@
             android:id="@+id/textViewSubstituteTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="2025-01-20 09:00 ~ 10:00"
-            android:textSize="11sp"
-            android:textColor="@android:color/black" />
+            android:text="2025-01-20 \n09:00 ~ 10:00"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray" />
 
         <!-- 요청자 이름 -->
         <TextView
@@ -48,7 +48,7 @@
         android:gravity="center">
 
         <!-- 수락 버튼 -->
-        <Button
+        <android.widget.Button
             android:id="@+id/buttonAccept"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
             android:minHeight="25dp"/>
 
         <!-- 승인 버튼 -->
-        <Button
+        <android.widget.Button
             android:id="@+id/buttonApprove"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

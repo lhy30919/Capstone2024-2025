@@ -106,7 +106,7 @@ class NoticeBoardFragment : Fragment() {
 
                     // 승인 버튼 초기 색상 설정
                     if (filteredSubstituteList[position].isApproved) {
-                        approveButton.setBackgroundColor(resources.getColor(android.R.color.holo_green_dark))
+                        approveButton.setBackgroundColor(resources.getColor(android.R.color.holo_green_light))
                         approveButton.isEnabled = false // 승인된 후 버튼 비활성화
                     } else {
                         approveButton.setBackgroundColor(resources.getColor(android.R.color.holo_red_dark))

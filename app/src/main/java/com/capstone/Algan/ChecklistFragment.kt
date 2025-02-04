@@ -209,7 +209,7 @@ class ChecklistFragment : Fragment() {
     private fun addTestChecklistItem() {
         // 기본 체크리스트 항목 추가 (예: "test 체크리스트")
         val testItem = ChecklistItem(
-            date = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(Date()),
+            date = SimpleDateFormat("yyyy-MM-dd \nHH:mm", Locale.getDefault()).format(Date()),
             employeeName = "테스트근로자",  // "테스트근로자"가 포함된 체크리스트 항목
             content = "test 체크리스트",
             isCompleted = false
