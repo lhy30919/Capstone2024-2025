@@ -3,6 +3,7 @@ package com.capstone.Algan
 import android.app.Application
 import android.content.Intent
 import android.os.Bundle
+import android.view.WindowInsets
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -22,7 +23,11 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.hide()
 // 툴바 설정
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
-
+    // 스플래시 화면을 비활성화하려면 아래 코드 추가
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            // Android 12 이상에서는 SplashScreen을 수동으로 비활성화
+            window.insetsController?.hide(WindowInsets.Type.statusBars()) // 상태바 숨기기
+        }
         // 툴바 메뉴 클릭 이벤트
         toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {

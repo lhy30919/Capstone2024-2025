@@ -24,6 +24,7 @@
         <!-- LoginActivity -->
         <activity
             android:name=".LoginActivity"
+            android:theme="@style/Theme.Algan"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
