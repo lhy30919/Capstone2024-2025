@@ -17,6 +17,7 @@ import android.widget.TextView
 import android.widget.TimePicker
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 
 class NoticeBoardFragment : Fragment() {
 
@@ -88,8 +89,16 @@ class NoticeBoardFragment : Fragment() {
                 override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
                     val itemView = convertView ?: LayoutInflater.from(context).inflate(R.layout.item_substitute_request, parent, false)
 
+                    val fullTimeRange = filteredSubstituteList[position].timeRange
+                    val datePart = fullTimeRange.substring(0, 10)
+                    val timePart = fullTimeRange.substring(11)
+
+                    val substituteDateTextView = itemView.findViewById<TextView>(R.id.textViewSubstituteDate)
+                    substituteDateTextView.text = datePart
+
                     val substituteTimeTextView = itemView.findViewById<TextView>(R.id.textViewSubstituteTime)
-                    substituteTimeTextView.text = filteredSubstituteList[position].timeRange
+                    substituteTimeTextView.text = timePart
+
 
                     val requesterNameTextView = itemView.findViewById<TextView>(R.id.textViewRequesterName)
                     requesterNameTextView.text = filteredSubstituteList[position].requesterName
@@ -101,16 +110,17 @@ class NoticeBoardFragment : Fragment() {
                     val acceptButton = itemView.findViewById<Button>(R.id.buttonAccept)
                     val approveButton = itemView.findViewById<Button>(R.id.buttonApprove)
 
-                    // 수락 버튼 초기 색상 설정
-                    acceptButton.setBackgroundColor(resources.getColor(R.color.pastel_blue))
+                // 수락 버튼 초기 색상 설정2024.02.05 수정.
+                    acceptButton.backgroundTintList = ContextCompat.getColorStateList(context, android.R.color.holo_green_light)
 
-                    // 승인 버튼 초기 색상 설정
+                // 승인 버튼 초기 색상 설정
                     if (filteredSubstituteList[position].isApproved) {
-                        approveButton.setBackgroundColor(resources.getColor(android.R.color.holo_green_light))
+                        approveButton.backgroundTintList = ContextCompat.getColorStateList(context, android.R.color.holo_green_light)
                         approveButton.isEnabled = false // 승인된 후 버튼 비활성화
                     } else {
-                        approveButton.setBackgroundColor(resources.getColor(android.R.color.holo_red_dark))
+                        approveButton.backgroundTintList = ContextCompat.getColorStateList(context, android.R.color.holo_orange_dark)
                     }
+
 
                     // 사업주만 승인 버튼을 누를 수 있도록 설정
                     if (isBusinessOwner()) {
