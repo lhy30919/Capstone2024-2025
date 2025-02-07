@@ -10,6 +10,7 @@ import com.capstone.Algan.R
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.DatePicker
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ListView
 import android.widget.NumberPicker
@@ -18,6 +19,10 @@ import android.widget.TimePicker
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.capstone.Algan.adapters.ChatAdapter
+import com.capstone.Algan.models.Message
 
 class NoticeBoardFragment : Fragment() {
 
@@ -291,23 +296,54 @@ class NoticeBoardFragment : Fragment() {
     }
 
 
-
-
-
-
-
-
-
     // 공지 화면 프래그먼트
     class NoticeFragment : Fragment() {
 
-        override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
-        ): View? {
-            return inflater.inflate(R.layout.fragment_notice, container, false)
+            private lateinit var recyclerView: RecyclerView
+            private lateinit var editTextMessage: EditText
+            private lateinit var buttonSend: Button
+            private lateinit var chatAdapter: ChatAdapter
+
+            private val messageList = mutableListOf<Message>()
+
+            override fun onCreateView(
+                inflater: LayoutInflater, container: ViewGroup?,
+                savedInstanceState: Bundle?
+            ): View? {
+                val view = inflater.inflate(R.layout.fragment_notice, container, false)
+
+                // UI 초기화
+                recyclerView = view.findViewById(R.id.recyclerView_messages)
+                editTextMessage = view.findViewById(R.id.editText_message)
+                buttonSend = view.findViewById(R.id.button_send)
+
+                // RecyclerView 설정
+                chatAdapter = ChatAdapter(messageList)
+                recyclerView.layoutManager = LinearLayoutManager(requireContext())
+                recyclerView.adapter = chatAdapter
+
+                // 메시지 보내기 버튼 클릭 처리
+                buttonSend.setOnClickListener {
+                    val messageText = editTextMessage.text.toString()
+                    if (messageText.isNotEmpty()) {
+                        // 메시지 추가
+                        val message = Message(messageText, "2025-02-07 10:00:00") // 임시 시간
+                        messageList.add(message)
+
+                        // RecyclerView 갱신
+                        chatAdapter.notifyItemInserted(messageList.size - 1)
+
+                        // 입력란 비우기
+                        editTextMessage.text.clear()
+
+                        // 메시지 자동 스크롤
+                        recyclerView.scrollToPosition(messageList.size - 1)
+                    }
+                }
+
+                return view
+            }
         }
-    }
 
     // 소통 화면 프래그먼트
     class CommunicationFragment : Fragment() {

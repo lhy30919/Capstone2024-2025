@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:layout_marginBottom="10dp">
+
+    <!-- 메시지 내용 -->
+    <TextView
+        android:id="@+id/tvMessageContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="메시지 내용"
+        android:textSize="16sp"
+        android:layout_marginBottom="4dp"/>
+
+    <!-- 메시지 타임스탬프 -->
+    <TextView
+        android:id="@+id/tvMessageTimestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="타임스탬프"
+        android:textSize="12sp"
+        android:textColor="#B0B0B0"/>
+</LinearLayout>

@@ -42,6 +42,6 @@
             android:layout_marginStart="8dp"
             android:textColor="@color/pastel_blue"
             android:importantForAccessibility="yes"
-            android:contentDescription="메시지 보내기 버튼"/>
+            android:contentDescription="보내기"/>
     </LinearLayout>
 </LinearLayout>
