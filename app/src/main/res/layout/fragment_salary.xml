@@ -86,6 +86,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:text="근로자 선택"
+            android:layout_height="wrap_content"/>
 
 
     </LinearLayout>

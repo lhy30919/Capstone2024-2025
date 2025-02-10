@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:hint="Username"
+        android:hint="email"
         android:textColorHint="@color/secondary_text"
         android:background="@drawable/edittext_background"
         android:padding="12dp"

@@ -34,13 +34,14 @@
             android:contentDescription="메시지 입력란"/>
 
         <!-- 보내기 버튼 -->
-        <Button
+        <android.widget.Button
             android:id="@+id/button_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="보내기"
             android:layout_marginStart="8dp"
-            android:textColor="@color/pastel_blue"
+            android:backgroundTint="@color/pastel_blue"
+            android:textColor="@color/black"
             android:importantForAccessibility="yes"
             android:contentDescription="보내기"/>
     </LinearLayout>
