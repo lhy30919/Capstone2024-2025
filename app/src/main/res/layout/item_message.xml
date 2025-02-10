@@ -6,7 +6,17 @@
     android:padding="8dp"
     android:background="?android:attr/selectableItemBackground"
     android:layout_marginBottom="10dp">
-
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:orientation="horizontal"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/btnProfile"
+        android:background="@color/pastel_blue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="30dp"
+        android:minWidth="30dp"/>
     <!-- 메시지 내용 -->
     <TextView
         android:id="@+id/tvMessageContent"
@@ -28,7 +38,7 @@
         android:minHeight="30dp"
         android:clipToOutline="true"
         android:outlineProvider="background"/>
-
+</LinearLayout>
     <!-- 메시지 타임스탬프 -->
     <TextView
         android:id="@+id/tvMessageTimestamp"
@@ -37,4 +47,5 @@
         android:text="타임스탬프"
         android:textSize="12sp"
         android:textColor="#B0B0B0"/>
+
 </LinearLayout>

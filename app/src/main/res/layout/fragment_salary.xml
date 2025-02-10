@@ -90,6 +90,13 @@
             android:layout_width="match_parent"
             android:text="근로자 선택"
             android:layout_height="wrap_content"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="근로자 이름 입력"/>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
 
     </LinearLayout>

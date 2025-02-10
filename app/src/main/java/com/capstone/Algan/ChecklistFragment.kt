@@ -47,18 +47,21 @@ class ChecklistFragment : Fragment() {
 
         // 사업주일 경우에만 체크리스트 추가 뷰가 보이게
         if (isBusinessOwner) {//사업자일 때
+            binding.tvgroup.visibility = View.VISIBLE//그룹 선택 텍스트
+            binding.spinnerGroup.visibility = View.VISIBLE//그룹 선택 스피너
+            binding.tvselectEmployees.visibility = View.VISIBLE //근로자 선택 텍스트
+            binding.spinnerEmployees.visibility = View.VISIBLE // 근로자 선택 스피너
             binding.textViewItemContent.visibility = View.VISIBLE //내용입력 텍스트
             binding.editTextItemContent.visibility = View.VISIBLE //입력 창
             binding.buttonAddItem.visibility = View.VISIBLE // 체크리스트 보내기 버튼
         } else {//아닐 경우(근로자) 안보이게
+            binding.tvgroup.visibility=View.GONE
+            binding.spinnerGroup.visibility = View.GONE
+            binding.tvselectEmployees.visibility = View.GONE
+            binding.spinnerEmployees.visibility = View.GONE
             binding.textViewItemContent.visibility = View.GONE
             binding.editTextItemContent.visibility = View.GONE
             binding.buttonAddItem.visibility = View.GONE
-            // 근로자는 그룹과 근로자 선택 불가하도록 설정
-            binding.spinnerGroup.isEnabled = false
-            binding.spinnerEmployees.isEnabled = false
-            // 로그인된 근로자 정보에 맞는 근로자만 선택되도록 설정
-            binding.spinnerEmployees.setSelection(employeeList.indexOf(loggedInUser.name))
         }
         val listView = binding.listViewItems
 
