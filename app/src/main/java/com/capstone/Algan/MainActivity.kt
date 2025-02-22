@@ -19,8 +19,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        // ActionBar 숨기기
-        supportActionBar?.hide()
+
 // 툴바 설정
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
     // 스플래시 화면을 비활성화하려면 아래 코드 추가
@@ -28,12 +27,24 @@ class MainActivity : AppCompatActivity() {
             // Android 12 이상에서는 SplashScreen을 수동으로 비활성화
             window.insetsController?.hide(WindowInsets.Type.statusBars()) // 상태바 숨기기
         }
+
         // 툴바 메뉴 클릭 이벤트
         toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
+                // 전체 근로자 화면으로 이동
+                R.id.menu_Allemployee -> {
+                    replaceFragment(AllemployeeFragment())
+                    true
+                }
                 R.id.menu_info -> {
                     // 내정보 화면으로 이동
                     val intent = Intent(this, InfoActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.menu_mypage -> {
+                    // 마이페이지 화면으로 이동
+                    val intent = Intent(this, MyPageActivity::class.java)
                     startActivity(intent)
                     true
                 }

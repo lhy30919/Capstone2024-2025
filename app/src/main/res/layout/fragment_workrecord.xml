@@ -1,57 +1,157 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="16dp"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <!-- 캘린더  -->
-    <android.widget.CalendarView
+    <!-- 상단 날짜 및 출퇴근 정보 -->
+    <LinearLayout
         android:layout_marginTop="56dp"
-        android:id="@+id/calendarView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:showWeekNumber="false"
-        android:firstDayOfWeek="1" />
+        android:background="@color/pastel_blue"
+        android:orientation="vertical">
 
-    <!-- 오늘 날짜 -->
-    <TextView
-        android:id="@+id/tvDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="오늘 날짜"
-        android:textSize="20sp"
-        android:layout_marginTop="10dp"
-        android:layout_gravity="center_horizontal" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <!-- 오늘 날짜 -->
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="오늘 날짜"
+                android:textColor="@color/white"
+                android:textSize="17sp" />
+        </LinearLayout>
 
-    <!-- 출근시간 -->
-    <TextView
-        android:id="@+id/tvClockIn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="출근 시간: 미등록"
-        android:textSize="18sp"
-        android:layout_gravity="center_horizontal" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
 
-    <!-- 퇴근시간 -->
-    <TextView
-        android:id="@+id/tvClockOut"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="퇴근 시간: 미등록"
-        android:textSize="18sp"
-        android:layout_gravity="center_horizontal" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:orientation="vertical">
+                <!-- 출근시간 -->
+                <TextView
+                    android:id="@+id/tvClockIn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="출근 시간: 미등록"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
 
-    <!-- 출근/퇴근 버튼 -->
-    <android.widget.Button
-        android:id="@+id/btnClockInOut"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="출근"
-        android:textSize="18sp"
-        android:backgroundTint="#4CAF50"
-        android:layout_marginTop="40dp"
-        android:layout_gravity="center_horizontal" />
+                <!-- 퇴근시간 -->
+                <TextView
+                    android:id="@+id/tvClockOut"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="퇴근 시간: 미등록"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center">
+                <!-- 출근/퇴근 버튼 -->
+                <Button
+                    android:id="@+id/btnClockInOut"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#4CAF50"
+                    android:text="출근"
+                    android:textSize="18sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 캘린더 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <CalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:firstDayOfWeek="1"
+            android:showWeekNumber="false" />
+    </LinearLayout>
+
+    <!-- 출퇴근 기록 리스트 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- 표의 첫 번째 행 (캡션) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:background="#CCCCCC">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:text="번호"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:text="날짜"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:text="출근 시간"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:text="퇴근 시간"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:text="근무 시간"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- 데이터 행 -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewRecords"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+        </HorizontalScrollView>
+    </ScrollView>
 
 </LinearLayout>

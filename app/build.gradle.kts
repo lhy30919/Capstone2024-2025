@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.capstone.Algan"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.capstone.Algan"
@@ -43,6 +43,7 @@ dependencies {
 
     implementation("com.google.firebase:firebase-auth")
 
+    implementation ("com.squareup.picasso:picasso:2.71828")
     implementation("com.google.firebase:firebase-analytics")
     implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
     implementation("androidx.core:core-ktx:1.9.0")
@@ -52,7 +53,8 @@ dependencies {
     implementation("com.google.firebase:firebase-database")
     implementation("androidx.activity:activity:1.9.3")
     implementation("com.google.firebase:firebase-firestore-ktx:25.1.1")
-    implementation ("com.google.firebase:firebase-messaging-ktx") //fcm
+    implementation ("com.google.firebase:firebase-messaging-ktx")
+    implementation("androidx.recyclerview:recyclerview:1.4.0") //fcm
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
