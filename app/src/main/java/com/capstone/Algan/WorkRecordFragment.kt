@@ -1,12 +1,11 @@
 package com.capstone.Algan
 
-import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.CalendarView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -22,7 +21,8 @@ class WorkRecordFragment : Fragment(R.layout.fragment_workrecord) {
     private lateinit var tvDate: TextView
     private lateinit var tvClockIn: TextView
     private lateinit var tvClockOut: TextView
-    private lateinit var calendarView: CalendarView
+    private lateinit var tvStartDate: TextView // 변경된 부분
+    private lateinit var tvEndDate: TextView // 변경된 부분
     private lateinit var recyclerView: RecyclerView
 
     private var isClockedIn = false
@@ -43,7 +43,8 @@ class WorkRecordFragment : Fragment(R.layout.fragment_workrecord) {
         tvDate = view.findViewById(R.id.tvDate)
         tvClockIn = view.findViewById(R.id.tvClockIn)
         tvClockOut = view.findViewById(R.id.tvClockOut)
-        calendarView = view.findViewById(R.id.calendarView)
+        tvStartDate = view.findViewById(R.id.tvStartDate) // 변경된 부분
+        tvEndDate = view.findViewById(R.id.tvEndDate) // 변경된 부분
         recyclerView = view.findViewById(R.id.recyclerViewRecords)
 
         // RecyclerView 설정
@@ -95,54 +96,85 @@ class WorkRecordFragment : Fragment(R.layout.fragment_workrecord) {
             }
         }
 
-        // 캘린더 날짜 선택 시 출퇴근 기록 창 나타남
-        calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
-            val selectedDate = String.format("%04d년 %02d월 %02d일", year, month + 1, dayOfMonth)
-            tvDate.text = selectedDate
-            showAttendanceDialog(selectedDate)
+        // 날짜 선택을 위한 DatePickerDialog 설정
+        tvStartDate.setOnClickListener {
+            showDatePicker { date ->
+                tvStartDate.text = date
+                filterRecordsByDate()
+            }
+        }
+
+        tvEndDate.setOnClickListener {
+            showDatePicker { date ->
+                tvEndDate.text = date
+                filterRecordsByDate()
+            }
         }
 
         return view
     }
 
-    private fun showAttendanceDialog(date: String) {
-        val attendance = loadAttendance(date)
-        val message = if (attendance != null) {
-            "출근 시간: ${attendance.first}\n퇴근 시간: ${attendance.second}"
-        } else {
-            "출퇴근 기록이 없습니다"
+    // 날짜 선택을 위한 DatePickerDialog 표시
+    private fun showDatePicker(onDateSelected: (String) -> Unit) {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
+            val formattedDate = String.format("%04d년 %02d월 %02d일", selectedYear, selectedMonth + 1, selectedDay)
+            onDateSelected(formattedDate)
+        }, year, month, day)
+
+        datePickerDialog.show()
+    }
+
+    // 날짜 범위에 맞춰 기록 필터링
+    private fun filterRecordsByDate() {
+        val startDate = tvStartDate.text.toString()
+        val endDate = tvEndDate.text.toString()
+
+        val filteredRecords = records.filter {
+            val recordDate = it.date
+            (startDate.isEmpty() || recordDate >= startDate) && (endDate.isEmpty() || recordDate <= endDate)
         }
 
-        AlertDialog.Builder(requireContext())
-            .setTitle("$date 출퇴근 기록")
-            .setMessage(message)
-            .setPositiveButton("확인", null)
-            .show()
+        // 필터링된 기록을 RecyclerView에 표시
+        recordAdapter.updateRecords(filteredRecords)
     }
 
     private fun saveAttendance(date: String, clockIn: String, clockOut: String) {
-        val sharedPref = requireActivity().getSharedPreferences("attendanceData", android.content.Context.MODE_PRIVATE)
-        with(sharedPref.edit()) {
-            putString("${date}_clockIn", clockIn)
-            putString("${date}_clockOut", clockOut)
-            apply()
-        }
+        // 새로운 출퇴근 기록을 리스트에 추가
+        val workedHours = calculateWorkedHours(clockIn, clockOut)
+        val newRecord = AttendanceRecordWithTime(records.size + 1, date, clockIn, clockOut, workedHours)
+        records.add(newRecord)
+        recordAdapter.notifyItemInserted(records.size - 1)  // 새로운 항목 추가 후 RecyclerView 갱신
     }
 
     private fun loadAttendance(date: String): Pair<String, String>? {
-        val sharedPref = requireActivity().getSharedPreferences("attendanceData", android.content.Context.MODE_PRIVATE)
-        val clockIn = sharedPref.getString("${date}_clockIn", null)
-        val clockOut = sharedPref.getString("${date}_clockOut", null)
-        return if (clockIn != null && clockOut != null) {
-            Pair(clockIn, clockOut)
-        } else {
-            null
+        // 리스트에서 해당 날짜의 출퇴근 기록 찾기
+        for (record in records) {
+            if (record.date == date) {
+                return Pair(record.clockIn, record.clockOut)
+            }
         }
+        return null
     }
 
     private fun getCurrentTime(): String {
         val sdf = SimpleDateFormat("HH:mm:ss", Locale.KOREA)
         return sdf.format(Date())
+    }
+
+    // 근무 시간을 계산하는 함수
+    private fun calculateWorkedHours(clockIn: String, clockOut: String): String {
+        val format = SimpleDateFormat("HH:mm:ss", Locale.KOREA)
+        val inTime = format.parse(clockIn)
+        val outTime = format.parse(clockOut)
+        val diffInMillis = outTime.time - inTime.time
+        val hours = (diffInMillis / (1000 * 60 * 60)).toInt()
+        val minutes = ((diffInMillis / (1000 * 60)) % 60).toInt()
+        return String.format("%02d:%02d", hours, minutes)
     }
 
     // 데이터 클래스 정의
@@ -155,7 +187,7 @@ class WorkRecordFragment : Fragment(R.layout.fragment_workrecord) {
     )
 
     // 어댑터 정의
-    class RecordAdapter(private val records: List<AttendanceRecordWithTime>) :
+    class RecordAdapter(private val records: MutableList<AttendanceRecordWithTime>) :
         RecyclerView.Adapter<RecordAdapter.RecordViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecordViewHolder {
@@ -175,6 +207,13 @@ class WorkRecordFragment : Fragment(R.layout.fragment_workrecord) {
 
         override fun getItemCount(): Int {
             return records.size
+        }
+
+        // RecyclerView의 기록 갱신
+        fun updateRecords(newRecords: List<AttendanceRecordWithTime>) {
+            records.clear()
+            records.addAll(newRecords)
+            notifyDataSetChanged()
         }
 
         inner class RecordViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
