@@ -15,6 +15,8 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.capstone.Algan.databinding.FragmentSalaryBinding
 import java.util.*
 
@@ -34,14 +36,57 @@ class SalaryFragment : Fragment() {
     private lateinit var tvStartDate: TextView
     private lateinit var tvEndDate: TextView
     private lateinit var spinnerWorker: Spinner
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var workRecordAdapter: WorkRecordAdapter
+    private lateinit var workRecordList: List<Map<String, String>>
 
-    private var isEmployer = false // 사업주 여부
+
+    private var isEmployer = true // 사업주 여부
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.fragment_salary, container, false)
+
+        // RecyclerView 초기화
+        recyclerView = view.findViewById(R.id.recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        // 예시 데이터 (근로자 기록)
+        workRecordList = listOf(
+            mapOf(
+                "number" to "1",
+                "workerName" to "근로자1",
+                "date" to "2025년 02월 16일",
+                "clockIn" to "09:00",
+                "clockOut" to "18:00",
+                "workedHours" to "08:00",
+                "hours" to "08:00"
+            ),
+            mapOf(
+                "number" to "2",
+                "workerName" to "근로자2",
+                "date" to "2025년 02월 16일",
+                "clockIn" to "10:00",
+                "clockOut" to "19:00",
+                "workedHours" to "08:00",
+                "hours" to "08:00"
+            ),
+            mapOf(
+                "number" to "3",
+                "workerName" to "근로자3",
+                "date" to "2025년 02월 16일",
+                "clockIn" to "08:00",
+                "clockOut" to "17:00",
+                "workedHours" to "08:00",
+                "hours" to "08:00"
+            )
+        )
+
+        // 어댑터 설정
+        workRecordAdapter = WorkRecordAdapter(workRecordList)
+        recyclerView.adapter = workRecordAdapter
 
         // UI 요소 초기화
         etStartTime = view.findViewById(R.id.etStartTime)
@@ -60,7 +105,8 @@ class SalaryFragment : Fragment() {
         spinnerWorker = view.findViewById(R.id.spinnerWorker)
 
         // 사업주 여부 체크 (실제 데이터에 맞게 변경 필요)
-        isEmployer = true // 예제에서는 사업주라고 가정
+        //isEmployer = false // 근로자 테스트
+        isEmployer = true // 사업주 테스트
 
         // 사업주일 때만 급여 입력 부분 보이도록
         if (isEmployer) {
@@ -183,5 +229,48 @@ class SalaryFragment : Fragment() {
         totalWorkHours.text = "총 근무시간: ${String.format("%.1f", totalHours)}시간"
         hourlyRate.text = "시급: ${etHourlyRate.text}원"
         deductions.text = "공제: ${etDeductions.text}%"
+    }
+}
+
+data class Worker(
+    val name: String,
+    val workTime: String,
+    val totalWorkHours: Double,
+    val hourlyRate: Double,
+    val deductions: Double
+)
+
+class WorkRecordAdapter(private val workRecordList: List<Map<String, String>>) :
+    RecyclerView.Adapter<WorkRecordAdapter.WorkRecordViewHolder>() {
+
+    inner class WorkRecordViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val tvNumber: TextView = view.findViewById(R.id.tvNumber)
+        val tvWorkerName: TextView = view.findViewById(R.id.tvWorkerName)
+        val tvDate: TextView = view.findViewById(R.id.tvDate)
+        val tvClockIn: TextView = view.findViewById(R.id.tvClockIn)
+        val tvClockOut: TextView = view.findViewById(R.id.tvClockOut)
+        val tvWorkedHours: TextView = view.findViewById(R.id.tvWorkedHours)
+        val tvHours: TextView = view.findViewById(R.id.tvHours)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkRecordViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_work_record, parent, false)
+        return WorkRecordViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: WorkRecordViewHolder, position: Int) {
+        val workRecord = workRecordList[position]
+        holder.tvNumber.text = workRecord["number"]
+        holder.tvWorkerName.text = workRecord["workerName"]
+        holder.tvDate.text = workRecord["date"]
+        holder.tvClockIn.text = workRecord["clockIn"]
+        holder.tvClockOut.text = workRecord["clockOut"]
+        holder.tvWorkedHours.text = workRecord["workedHours"]
+        holder.tvHours.text = workRecord["hours"]
+    }
+
+    override fun getItemCount(): Int {
+        return workRecordList.size
     }
 }
