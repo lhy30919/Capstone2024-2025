@@ -51,8 +51,22 @@ class NoticeBoardFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+        // 레이아웃 뷰
         val view = inflater.inflate(R.layout.fragment_noticeboard, container, false)
+        //게시판 메뉴 밑줄
+        val underlineDaeta = view.findViewById<View>(R.id.underline_daeta)
+        val underlineNotice = view.findViewById<View>(R.id.underline_notice)
+        val underlineCommunication = view.findViewById<View>(R.id.underline_communication)
+
+        fun Buttonunderline(selected: View) {
+            // 모든 줄 숨기기
+            underlineDaeta.visibility = View.GONE
+            underlineNotice.visibility = View.GONE
+            underlineCommunication.visibility = View.GONE
+
+            // 선택된 줄만 보이게 하기
+            selected.visibility = View.VISIBLE
+        }
 
         // 기본 화면을 대타 화면으로 설정
         replaceFragment(DaeTaFragment())
@@ -61,20 +75,23 @@ class NoticeBoardFragment : Fragment() {
         val buttonDaeta = view.findViewById<View>(R.id.button_daeta)
         buttonDaeta.setOnClickListener {
             replaceFragment(DaeTaFragment())
+            Buttonunderline(underlineDaeta)
         }
 
         // 공지 버튼 클릭
         val buttonNotice = view.findViewById<View>(R.id.button_notice)
         buttonNotice.setOnClickListener {
             replaceFragment(NoticeFragment())
+            Buttonunderline(underlineNotice)
         }
 
         // 소통 버튼 클릭
         val buttonCommunication = view.findViewById<View>(R.id.button_communication)
         buttonCommunication.setOnClickListener {
             replaceFragment(CommunicationFragment())
+            Buttonunderline(underlineCommunication)
         }
-
+        Buttonunderline(underlineDaeta)
         return view
     }
 

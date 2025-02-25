@@ -15,7 +15,7 @@
 
     <!-- 알림 버튼 -->
     <item
-        android:id="@+id/menu_notification"
+        android:id="@+id/menu_alam"
         android:icon="@drawable/baseline_notification_important_24"
         android:title="알림"
         app:showAsAction="always" />

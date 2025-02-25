@@ -36,6 +36,11 @@ class MainActivity : AppCompatActivity() {
                     replaceFragment(AllemployeeFragment())
                     true
                 }
+                // 알람 화면으로 이동
+                R.id.menu_alam -> {
+                    replaceFragment(AlamFragment())
+                    true
+                }
                 R.id.menu_info -> {
                     // 내정보 화면으로 이동
                     val intent = Intent(this, InfoActivity::class.java)
