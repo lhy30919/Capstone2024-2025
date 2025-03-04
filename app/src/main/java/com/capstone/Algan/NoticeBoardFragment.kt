@@ -58,14 +58,14 @@ class NoticeBoardFragment : Fragment() {
         val underlineNotice = view.findViewById<View>(R.id.underline_notice)
         val underlineCommunication = view.findViewById<View>(R.id.underline_communication)
 
-        fun Buttonunderline(selected: View) {
+        fun Buttonunderline(underline: View) {
             // 모든 줄 숨기기
             underlineDaeta.visibility = View.GONE
             underlineNotice.visibility = View.GONE
             underlineCommunication.visibility = View.GONE
 
             // 선택된 줄만 보이게 하기
-            selected.visibility = View.VISIBLE
+            underline.visibility = View.VISIBLE
         }
 
         // 기본 화면을 대타 화면으로 설정

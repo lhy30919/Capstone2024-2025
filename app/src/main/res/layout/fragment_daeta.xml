@@ -2,75 +2,103 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/noticeboard_background"
     android:orientation="vertical"
-    android:padding="3dp"
-    android:background="@color/noticeboard_background">
+    android:padding="3dp">
 
     <!-- 대타 신청 리스트와 대타 요청이 없을 때 메시지 -->
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_weight="1"
         android:background="@color/light_background"
-        android:layout_weight="1">
+        android:orientation="vertical">
 
         <!-- 대타 신청 리스트 -->
         <ListView
             android:id="@+id/listViewSubstituteRequests"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/light_background"
             android:divider="@android:color/darker_gray"
-            android:dividerHeight="1dp"
-            android:background="@color/light_background" />
+            android:dividerHeight="1dp" />
 
         <!-- 대타 요청이 없을 경우 메시지 -->
         <TextView
             android:id="@+id/textNoRequests"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="대타 요청이 없습니다."
-            android:textSize="16sp"
-            android:textColor="@android:color/darker_gray"
+            android:layout_height="wrap_content"
             android:gravity="center"
+            android:text="대타 내역이 없습니다!"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="30sp"
             android:visibility="gone" />
-    </RelativeLayout>
+    </LinearLayout>
 
     <!-- 나의 대타 요청, 나의 대타 수락, 대타 신청 버튼 -->
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
+        android:paddingTop="3dp"
         android:gravity="center_vertical"
-        android:padding="5dp">
+        android:orientation="horizontal">
 
-        <!-- 나의 대타 요청 내역 버튼 -->
-        <android.widget.Button
-            android:id="@+id/buttonMySubstituteRequest"
+        <FrameLayout
             android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:layout_weight="1"
-            android:text="대타 요청 내역"
-            android:background="@drawable/round_button"
-            android:textSize="13sp"
-            android:maxLines="2"
-            android:ellipsize="end"
-            android:minHeight="25dp"
-            android:padding="2dp"
-            android:layout_marginEnd="5dp" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1">
+
+            <!-- 나의 대타 요청 내역 버튼 -->
+            <android.widget.Button
+                android:id="@+id/buttonMySubstituteRequest"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@color/noticeboard_background"
+                android:text="나의 대타 요청"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="14dp"
+                android:tint="@color/noticeboard_background" />
+        <View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:background="@color/secondary_text"
+            android:elevation="3dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="5dp"
+            android:visibility="visible"/>
+        </FrameLayout>
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1">
 
         <!-- 나의 대타 수락 내역 버튼 -->
-        <android.widget.Button
-            android:id="@+id/buttonMySubstituteAccept"
-            android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:layout_weight="1"
-            android:text="대타 수락 내역"
-            android:background="@drawable/round_button"
-            android:textSize="13sp"
-            android:maxLines="2"
-            android:ellipsize="end"
-            android:minHeight="25dp"
-            android:padding="2dp"
-            android:layout_marginEnd="5dp" />
+            <android.widget.Button
+                android:id="@+id/buttonMySubstituteAccept"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@color/noticeboard_background"
+                android:text="대타 수락 내역"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="14dp"
+                android:tint="@color/noticeboard_background" />
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:background="@color/secondary_text"
+                android:elevation="3dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="5dp"
+                android:visibility="visible"/>
+        </FrameLayout>
 
         <!-- 대타 신청 이미지 버튼 -->
         <ImageButton
@@ -78,8 +106,9 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="end"
-            android:src="@drawable/baseline_edit_note_24"
+            android:layout_marginEnd="5dp"
             android:contentDescription="대타 신청 버튼"
-            android:layout_marginStart="0dp" />
+            android:background="@color/noticeboard_background"
+            android:src="@drawable/baseline_mode_24" />
     </LinearLayout>
 </LinearLayout>

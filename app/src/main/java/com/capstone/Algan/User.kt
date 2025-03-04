@@ -7,6 +7,6 @@ data class User(
     val password: String,
     val role: String,
     val phone: String,
-    val companyName: String? = null // 회사 이름 (사업주만 필요)
+    val companyName: String? = null
 )
 
