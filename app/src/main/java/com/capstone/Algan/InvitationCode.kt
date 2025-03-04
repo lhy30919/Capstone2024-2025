@@ -6,4 +6,3 @@ data class InvitationCode(
     var isUsed: Boolean, //사용가능여부
     val expiryDate: Long // 만료일
 )
-

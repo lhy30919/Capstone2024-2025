@@ -13,14 +13,14 @@ import androidx.recyclerview.widget.RecyclerView
 class AllemployeeFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
-    private val userList = mutableListOf<User>()
+    private val userList = mutableListOf<Employee>()
 
     // 모든 근로자 데이터 (실제 데이터는 Firebase에서 가져오도록 변경해야함)
     private val allUsers = listOf(
-        User("user1@example.com", "user1", "password1", "근로자", "010-1234-5678", "ABC"),
-        User("user2@example.com", "user2", "password2", "근로자", "010-2345-6789", "XYZ"),
-        User("owner@example.com", "owner", "password3", "사업주", "010-3456-7890", "ABC"),
-        User("user3@example.com", "user3", "password4", "근로자", "010-4567-8901", "ABC")
+        Employee("user1@example.com", "user1", "password1", "근로자", "010-1234-5678", "ABC", "1"),
+        Employee("user2@example.com", "user2", "password2", "근로자", "010-2345-6789", "XYZ", "2"),
+        Employee("owner@example.com", "owner", "password3", "사업주", "010-3456-7890", "ABC", "3"),
+        Employee("user3@example.com", "user3", "password4", "근로자", "010-4567-8901", "ABC", "4")
     )
 
     override fun onCreateView(
