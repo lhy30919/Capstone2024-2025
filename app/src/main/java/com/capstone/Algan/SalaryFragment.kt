@@ -96,8 +96,7 @@ class SalaryFragment : Fragment() {
         spinnerWorker.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parentView: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val selectedWorker = workerList[position]
-                // 선택된 근로자에 대한 정보 표시
-                Toast.makeText(context, "선택된 근로자: ${selectedWorker.name}", Toast.LENGTH_SHORT).show()
+
                 // 선택된 근로자의 기록 갱신 (예시)
                 updateWorkRecords(selectedWorker)
             }

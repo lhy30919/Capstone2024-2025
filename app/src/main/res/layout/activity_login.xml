@@ -8,6 +8,10 @@
     android:gravity="center"
     android:padding="16dp"
     android:background="@color/light_background">
+<ImageView
+    android:layout_width="150dp"
+    android:layout_height="wrap_content"
+    android:src="@drawable/splash"/>
 
     <EditText
         android:id="@+id/Email"
@@ -77,8 +81,6 @@
         android:layout_margin="20dp"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-
-
         />
 
 </LinearLayout>

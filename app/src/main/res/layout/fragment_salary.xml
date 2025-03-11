@@ -115,6 +115,14 @@
                         android:layout_height="wrap_content"
                         android:hint="근무시간을 입력하세요"
                         android:inputType="text" />
+
+                    <TextView
+                        android:id="@+id/tvGetTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+
+                        android:text="가져온 근무시간"/>
                 </LinearLayout>
 
 
@@ -127,7 +135,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="설정" />
+                android:text="계산" />
         </LinearLayout>
 
         <!-- 근로자 정보 영역 -->
