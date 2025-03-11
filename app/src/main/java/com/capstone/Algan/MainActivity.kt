@@ -33,6 +33,11 @@ class MainActivity : AppCompatActivity() {
                     replaceFragment(AllemployeeFragment())
                     true
                 }
+                //알림 화면으로 이동
+                R.id.menu_alam ->{
+                    replaceFragment(AlamFragment())
+                    true
+                }
 
                 R.id.menu_mypage -> {
                     // 마이페이지 화면으로 이동
