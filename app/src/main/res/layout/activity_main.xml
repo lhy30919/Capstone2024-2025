@@ -36,6 +36,6 @@
         app:menu="@menu/menu_bottom_nav"
         app:labelVisibilityMode="labeled"
         app:itemTextColor="@color/black"
-        app:itemIconTint="#2196F3"/>
+        app:itemIconTint="@color/cardview_dark_background"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
