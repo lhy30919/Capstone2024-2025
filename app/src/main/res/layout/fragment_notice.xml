@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/light_background"
     android:orientation="vertical"
-    android:padding="5dp">
+    android:padding="3dp">
 
     <!-- 채팅 메시지 목록 -->
     <androidx.recyclerview.widget.RecyclerView

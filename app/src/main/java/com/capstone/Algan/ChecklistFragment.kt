@@ -11,7 +11,6 @@ import com.capstone.Algan.databinding.FragmentChecklistBinding
 import java.text.SimpleDateFormat
 import java.util.*
 import android.text.TextUtils
-
 class ChecklistFragment : Fragment() {
 
     private var _binding: FragmentChecklistBinding? = null
@@ -21,19 +20,18 @@ class ChecklistFragment : Fragment() {
     private val isBusinessOwner = true  // 사업주로 테스트 하기 위한 코드
     //private val isBusinessOwner = false // 근로자로 테스트 하기 위한 코드
     // 근로자 목록 (테스트용으로 "테스트근로자" 사용)
-    private val employeeList = listOf("근로자 1", "근로자 2", "근로자 3","테스트근로자")
+    private val employeeList = listOf("근로자 1", "근로자 2", "근로자 3", "테스트근로자")
 
     // 그룹에 해당하는 근로자 리스트
     private val employeesByGroup = mapOf(
-        "전체" to listOf("근로자 1", "근로자 2", "근로자 3","테스트근로자"),
-        "오전" to listOf("근로자 1","테스트근로자"),
-        "오후" to listOf("근로자 2", "근로자 3")
+        "전체" to listOf("근로자 1", "근로자 2", "근로자 3", "테스트근로자")
     )
     // 로그인한 근로자 정보 (테스트용: 테스트근로자, 오전 근무)
     private val loggedInUser = Employee("테스트근로자", "오전")
 
     private val checklistItems = mutableListOf<ChecklistItem>()
     private lateinit var listViewAdapter: ChecklistAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,17 +44,13 @@ class ChecklistFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // 사업주일 경우에만 체크리스트 추가 뷰가 보이게
-        if (isBusinessOwner) {//사업자일 때
-            binding.tvgroup.visibility = View.VISIBLE//그룹 선택 텍스트
-            binding.spinnerGroup.visibility = View.VISIBLE//그룹 선택 스피너
+        if (isBusinessOwner) {
             binding.tvselectEmployees.visibility = View.VISIBLE //근로자 선택 텍스트
             binding.spinnerEmployees.visibility = View.VISIBLE // 근로자 선택 스피너
             binding.textViewItemContent.visibility = View.VISIBLE //내용입력 텍스트
             binding.editTextItemContent.visibility = View.VISIBLE //입력 창
             binding.buttonAddItem.visibility = View.VISIBLE // 체크리스트 보내기 버튼
-        } else {//아닐 경우(근로자) 안보이게
-            binding.tvgroup.visibility=View.GONE
-            binding.spinnerGroup.visibility = View.GONE
+        } else {
             binding.tvselectEmployees.visibility = View.GONE
             binding.spinnerEmployees.visibility = View.GONE
             binding.textViewItemContent.visibility = View.GONE
@@ -92,7 +86,6 @@ class ChecklistFragment : Fragment() {
             setListViewHeightBasedOnItems()
         }
 
-        setupGroupSpinner()
         setupEmployeeSpinner()
         setupListView()
         setupAddButton()
@@ -101,25 +94,14 @@ class ChecklistFragment : Fragment() {
         addTestChecklistItem()
     }
 
-    private fun setupGroupSpinner() {
-        val groupList = listOf("전체", "오전", "오후")
-        val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, groupList)
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerGroup.adapter = spinnerAdapter
-
-        binding.spinnerGroup.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                // 그룹 선택에 맞춰 근로자 리스트 필터링
-                val selectedGroup = binding.spinnerGroup.selectedItem.toString()
-                updateEmployeeSpinner(selectedGroup)
-                filterChecklistItems()
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
-    }
-
     private fun setupEmployeeSpinner() {
+        val employeeSpinnerList = employeeList.toMutableList()
+        employeeSpinnerList.add(0, "전체") // "전체" 항목을 추가
+
+        val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, employeeSpinnerList)
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerEmployees.adapter = spinnerAdapter
+
         if (isBusinessOwner) {
             binding.spinnerEmployees.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -130,7 +112,7 @@ class ChecklistFragment : Fragment() {
             }
         } else {
             // 근로자일 경우 본인만 선택 가능하게
-            binding.spinnerEmployees.setSelection(employeeList.indexOf(loggedInUser.name))
+            binding.spinnerEmployees.setSelection(employeeList.indexOf(loggedInUser.name) + 1) // +1은 "전체"를 제외한 인덱스
         }
     }
 
@@ -150,17 +132,14 @@ class ChecklistFragment : Fragment() {
                 // 선택된 근로자에게 보내는 항목 추가
                 if (employeeName == "전체") {
                     // "전체" 선택 시 해당 그룹에 속한 모든 근로자에게 항목을 추가
-                    val selectedGroup = binding.spinnerGroup.selectedItem.toString()
-                    val employeesInGroup = employeesByGroup[selectedGroup] ?: listOf()
-
-                    employeesInGroup.forEach { employee ->
+                    employeesByGroup["전체"]?.forEach { employee ->
                         val newItem = ChecklistItem(currentDate, employee, content, false)
-                        checklistItems.add(0,newItem)
+                        checklistItems.add(0, newItem)
                     }
                 } else {
                     // 개별 근로자에게 항목을 추가
                     val newItem = ChecklistItem(currentDate, employeeName, content, false)
-                    checklistItems.add(0,newItem)
+                    checklistItems.add(0, newItem)
                 }
 
                 listViewAdapter.notifyDataSetChanged()
@@ -172,43 +151,20 @@ class ChecklistFragment : Fragment() {
         }
     }
 
-    private fun updateEmployeeSpinner(selectedGroup: String) {
-        val employeesInGroup = employeesByGroup[selectedGroup]?.toMutableList() ?: mutableListOf()
-
-        // "전체" 항목을 항상 추가 (그룹이 "오전" 또는 "오후"일 때도)
-        if (employeesInGroup.isNotEmpty() && !employeesInGroup.contains("전체")) {
-            employeesInGroup.add(0, "전체")  // "전체" 항목을 제일 앞에 추가
-        }
-
-        val spinnerAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, employeesInGroup)
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerEmployees.adapter = spinnerAdapter
-    }
-
     private fun filterChecklistItems() {
         val selectedEmployee = binding.spinnerEmployees.selectedItem?.toString()
-        val selectedGroup = binding.spinnerGroup.selectedItem.toString()
-
-        val employeesInGroup = employeesByGroup[selectedGroup] ?: listOf()
 
         checklistItems.forEach { item ->
             item.isVisible = when {
-                selectedEmployee == "전체" && item.employeeName in employeesInGroup -> true
-                selectedEmployee == item.employeeName -> true
                 selectedEmployee == "전체" -> true
+                selectedEmployee == item.employeeName -> true
                 else -> false
             }
         }
 
         listViewAdapter.notifyDataSetChanged()
     }
-    private fun getGroupPosition(group: String): Int {
-        return when (group) {
-            "오전" -> 0
-            "오후" -> 1
-            else -> -1
-        }
-    }
+
     private fun addTestChecklistItem() {
         // 기본 체크리스트 항목 추가 (예: "test 체크리스트")
         val testItem = ChecklistItem(
@@ -220,14 +176,15 @@ class ChecklistFragment : Fragment() {
         checklistItems.add(testItem)
         listViewAdapter.notifyDataSetChanged()
     }
+
     override fun onResume() {
         super.onResume()
-        binding.spinnerGroup.setSelection(0)
-        binding.spinnerEmployees.setSelection(0)
+        binding.spinnerEmployees.setSelection(0) // "전체"로 초기화
         filterChecklistItems()
         // 체크리스트 갱신
         listViewAdapter.notifyDataSetChanged()
     }
+
     // 근로자 정보 클래스
     data class Employee(val name: String, val group: String)
 
@@ -238,6 +195,7 @@ class ChecklistFragment : Fragment() {
         var isCompleted: Boolean,
         var isVisible: Boolean = true
     )
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -262,7 +220,6 @@ class ChecklistFragment : Fragment() {
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
             val visibleItems = items.filter { it.isVisible }
             val item = visibleItems[position]
-
 
             val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.item_checklist, parent, false)
             val tvDate = view.findViewById<TextView>(R.id.tvDate)
@@ -304,22 +261,22 @@ class ChecklistFragment : Fragment() {
             return view
         }
     }
-        // 완료 => 미완료 버튼 바꾸는 함수. 알람 로직 추가 필요.
-        private fun updateButtonStatus(button: Button, isCompleted: Boolean) {
-            if (!isAdded) return // 프래그먼트가 유효하지 않으면 리턴
 
-            val color = if (isCompleted) android.R.color.holo_green_light else android.R.color.holo_orange_light
-            val text = if (isCompleted) "완료" else "미완료"
+    // 완료 => 미완료 버튼 바꾸는 함수. 알람 로직 추가 필요.
+    private fun updateButtonStatus(button: Button, isCompleted: Boolean) {
+        if (!isAdded) return // 프래그먼트가 유효하지 않으면 리턴
 
-            button.text = text
+        val color = if (isCompleted) android.R.color.holo_green_light else android.R.color.holo_orange_light
+        val text = if (isCompleted) "완료" else "미완료"
 
-            val drawable = GradientDrawable().apply {
-                shape = GradientDrawable.RECTANGLE
-                cornerRadius = 16f
-                setColor(resources.getColor(color, null))
-            }
+        button.text = text
 
-            button.background = drawable
+        val drawable = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadius = 16f
+            setColor(resources.getColor(color, null))
         }
 
+        button.background = drawable
+    }
 }

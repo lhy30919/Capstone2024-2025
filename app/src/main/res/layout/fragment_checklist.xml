@@ -7,85 +7,70 @@
     android:layout_marginBottom="5dp"
     android:background="@color/light_background">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <!-- 그룹 선택 -->
-        <TextView
-            android:id="@+id/tvgroup"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="그룹 선택"
-            android:textSize="18sp"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="8dp"/>
-
-        <Spinner
-            android:id="@+id/spinnerGroup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <!-- 근로자 선택 -->
-        <TextView
-            android:id="@+id/tvselectEmployees"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="근로자 선택"
-            android:textSize="18sp"
-            android:textColor="@android:color/black"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"/>
-
-        <Spinner
-            android:id="@+id/spinnerEmployees"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:id="@+id/textViewItemContent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="내용 입력"
-            android:textSize="18sp"
-            android:textColor="@android:color/black"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"/>
-
-        <EditText
-            android:id="@+id/editTextItemContent"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="항목 내용"
-            android:textSize="16sp"
-            android:layout_marginBottom="16dp"/>
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/button_addItem"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="선택한 근로자에게 보내기"
-            android:textColor="@color/white"
-            android:backgroundTint="@color/secondary_text"
-            android:layout_marginBottom="16dp"/>
+                <!-- 근로자 선택 -->
+                <TextView
+                    android:id="@+id/tvselectEmployees"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="근로자 선택"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"/>
 
-        <!-- 추가된 항목 리스트 -->
-        <TextView
-            android:id="@+id/textViewChecklist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="체크리스트"
-            android:textSize="18sp"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="8dp"/>
+                <Spinner
+                    android:id="@+id/spinnerEmployees"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
-        <!-- 리스트 뷰 크기 조정 -->
-        <ListView
-            android:id="@+id/listViewItems"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:divider="@android:color/darker_gray"
-            android:dividerHeight="0.5dp" />
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/textViewItemContent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="내용 입력"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"/>
+
+                <EditText
+                    android:id="@+id/editTextItemContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="항목 내용"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="16dp"/>
+
+                <Button
+                    android:id="@+id/button_addItem"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="선택한 근로자에게 보내기"
+                    android:textColor="@color/white"
+                    android:backgroundTint="@color/secondary_text"
+                    android:layout_marginBottom="16dp"/>
+
+                <!-- 추가된 항목 리스트 -->
+                <TextView
+                    android:id="@+id/textViewChecklist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="체크리스트"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="8dp"/>
+
+                <!-- 리스트 뷰 크기 조정 -->
+                <ListView
+                    android:id="@+id/listViewItems"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="@android:color/darker_gray"
+                    android:dividerHeight="0.5dp" />
+        </LinearLayout>
 </ScrollView>

@@ -1,8 +1,10 @@
 package com.capstone.Algan
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -13,7 +15,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import java.util.*
 
 class SignUpActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
@@ -64,7 +65,7 @@ class SignUpActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {
                 if (s != null && s.length >= 3) {
                     val companyCode = generateCompanyCode(s.toString())
-                    generatedCompanyCodeTextView.text = "$companyCode"
+                    generatedCompanyCodeTextView.text = "회사 코드: $companyCode"
                 } else {
                     generatedCompanyCodeTextView.text = ""
                 }
@@ -108,7 +109,7 @@ class SignUpActivity : AppCompatActivity() {
                     Toast.makeText(this, "회사 코드를 입력하세요.", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
-                signUpAsEmployee(username, password, email, phone, companyCode, companyName)
+                signUpAsEmployee(username, password, email, phone, companyCode)
             }
         }
     }
@@ -117,6 +118,7 @@ class SignUpActivity : AppCompatActivity() {
         val nameSuffix = companyName.takeLast(3)
         val randomSuffix = (10000..99999).random().toString()
         return "$nameSuffix$randomSuffix"
+
     }
 
     private fun signUpAsBusinessOwner(username: String, password: String, email: String, phone: String, companyName: String, companyCode: String) {
@@ -124,16 +126,43 @@ class SignUpActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val userId = auth.currentUser!!.uid
-                    val user = BusinessOwner(uid = userId, username = username, phone = phone, email = email, companyName = companyName, companyCode = companyCode)
 
-                    database.reference.child("companies").child(companyCode).child("owner")
-                        .setValue(user)
+                    // 사업주 데이터 객체 생성
+                    val businessOwner = BusinessOwner(
+                        uid = userId, username = username, phone = phone,
+                        email = email, companyName = companyName, companyCode = companyCode
+                    )
+
+                    // 공통 User 데이터 객체 생성
+                    val user = User(
+                        uid = userId, username = username, role = "사업주",
+                        phone = phone, email = email, companyCode = companyCode
+                    )
+
+                    val databaseRef = database.reference
+                    val userRef = databaseRef.child("users").child(userId)  // users/{uid} 저장
+                    val companyRef = databaseRef.child("companies").child(companyCode).child("owner")  // companies/{companyCode}/owner 저장
+
+                    // Firebase에 동시에 저장
+                    val updates = hashMapOf<String, Any>(
+                        "users/$userId" to user,
+                        "companies/$companyCode/owner" to businessOwner
+                    )
+
+                    databaseRef.updateChildren(updates)
                         .addOnSuccessListener {
-                            Toast.makeText(this, "$companyCode", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "회원가입 성공!", Toast.LENGTH_SHORT).show()
+
+                            // 사용자 정보를 로컬에 저장
+                            saveUserData(username, email, phone, companyName, companyCode)
+
+                            // 로그인 화면으로 이동
+                            val intent = Intent(this, LoginActivity::class.java)
+                            startActivity(intent)
                             finish()
                         }
                         .addOnFailureListener { e ->
-                            Toast.makeText(this, "Realtime Database 저장 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "데이터 저장 실패: ${e.message}", Toast.LENGTH_SHORT).show()
                         }
                 } else {
                     Toast.makeText(this, "회원가입 실패: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
@@ -141,22 +170,52 @@ class SignUpActivity : AppCompatActivity() {
             }
     }
 
-    private fun signUpAsEmployee(username: String, password: String, email: String, phone: String, companyCode: String, companyName: String) {
+
+    private fun signUpAsEmployee(username: String, password: String, email: String, phone: String, companyCode: String) {
         isCompanyCodeValid(companyCode) { isValid ->
             if (isValid) {
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this) { task ->
                         if (task.isSuccessful) {
                             val userId = auth.currentUser!!.uid
-                            val user = Employee(uid = userId, username = username, phone = phone, email = email, companyCode = companyCode, salary = null, companyName = companyName, workingHours = null)
 
-                            database.reference.child("companies").child(companyCode).child("employees").child(userId).setValue(user)
+                            // 근로자 데이터 객체 생성
+                            val employee = Employee(
+                                uid = userId, username = username, phone = phone,
+                                email = email, companyCode = companyCode,
+                                salary = null, workingHours = null
+                            )
+
+                            // 공통 User 데이터 객체 생성
+                            val user = User(
+                                uid = userId, username = username, role = "근로자",
+                                phone = phone, email = email, companyCode = companyCode
+                            )
+
+                            val databaseRef = database.reference
+                            val userRef = databaseRef.child("users").child(userId)  // users/{uid} 저장
+                            val companyRef = databaseRef.child("companies").child(companyCode).child("employees").child(userId)  // companies/{companyCode}/employees/{uid} 저장
+
+                            // Firebase에 동시에 저장
+                            val updates = hashMapOf<String, Any>(
+                                "users/$userId" to user,
+                                "companies/$companyCode/employees/$userId" to employee
+                            )
+
+                            databaseRef.updateChildren(updates)
                                 .addOnSuccessListener {
                                     Toast.makeText(this, "근로자 회원가입 성공!", Toast.LENGTH_SHORT).show()
+
+                                    // 사용자 정보를 로컬에 저장
+                                    saveUserData(username, email, phone, null, companyCode)
+
+                                    // 로그인 화면으로 이동
+                                    val intent = Intent(this, LoginActivity::class.java)
+                                    startActivity(intent)
                                     finish()
                                 }
                                 .addOnFailureListener { e ->
-                                    Toast.makeText(this, "Realtime Database 저장 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this, "데이터 저장 실패: ${e.message}", Toast.LENGTH_SHORT).show()
                                 }
                         } else {
                             Toast.makeText(this, "회원가입 실패: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
@@ -166,15 +225,48 @@ class SignUpActivity : AppCompatActivity() {
                 Toast.makeText(this, "유효하지 않은 회사 코드입니다.", Toast.LENGTH_SHORT).show()
             }
         }
+
     }
 
+
+    /**
+     * 회사 코드 유효성 검사 함수
+     */
     private fun isCompanyCodeValid(companyCode: String, callback: (Boolean) -> Unit) {
         database.reference.child("companies").child(companyCode).get()
             .addOnSuccessListener { snapshot ->
-                callback(snapshot.exists())
-            }.addOnFailureListener {
-                Toast.makeText(this, "회사 코드 확인 실패", Toast.LENGTH_SHORT).show()
+                if (snapshot.exists()) {
+                    Log.d("SignUpActivity", "회사 코드 확인 성공: $companyCode")
+                    callback(true)
+                } else {
+                    Log.d("SignUpActivity", "회사 코드 없음: $companyCode")
+                    callback(false)
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("DatabaseError", "회사 코드 확인 실패: ${e.message}")
+                Toast.makeText(this, "회사 코드 확인 실패: ${e.message}", Toast.LENGTH_SHORT).show()
                 callback(false)
             }
+    }
+
+
+
+    private fun saveUserData(username: String, email: String, phone: String?, companyName: String?, companyCode: String) {
+        val sharedPreferences = getSharedPreferences("UserData", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+
+        editor.putString("username", username)
+        editor.putString("email", email)
+        editor.putString("phone", phone)
+        editor.putString("companyName", companyName)
+        editor.putString("companyCode", companyCode)
+
+        val success = editor.commit()
+        if (success) {
+            Log.d("SignUpActivity", "데이터 저장 성공")
+        } else {
+            Log.e("SignUpActivity", "데이터 저장 실패")
+        }
     }
 }

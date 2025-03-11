@@ -33,12 +33,7 @@ class MainActivity : AppCompatActivity() {
                     replaceFragment(AllemployeeFragment())
                     true
                 }
-                R.id.menu_info -> {
-                    // 내정보 화면으로 이동
-                    val intent = Intent(this, InfoActivity::class.java)
-                    startActivity(intent)
-                    true
-                }
+
                 R.id.menu_mypage -> {
                     // 마이페이지 화면으로 이동
                     val intent = Intent(this, MyPageActivity::class.java)
