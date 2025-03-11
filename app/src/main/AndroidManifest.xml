@@ -33,17 +33,20 @@
         <activity
             android:name=".MyPageActivity"
             android:exported="true" />
-        <!-- LoginActivity -->
+        <!-- SplashActivity -->
         <activity
-            android:name=".LoginActivity"
+            android:name=".SplashActivity"
             android:theme="@style/Theme.Algan"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- LoginActivity -->
+        <activity
+            android:name=".LoginActivity"
+            android:theme="@style/Theme.Algan" />
         <!-- MainActivity -->
         <activity android:name=".MainActivity"
             android:exported="true"/>
