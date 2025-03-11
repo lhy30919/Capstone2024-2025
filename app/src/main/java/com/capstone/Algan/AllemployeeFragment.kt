@@ -47,7 +47,8 @@ class AllemployeeFragment : Fragment() {
     }
 
     private fun loadUserData() {
-        val sharedPreferences = requireActivity().getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
+        val sharedPreferences =
+            requireActivity().getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
         val userId = sharedPreferences.getString("userId", null)
 
         if (userId == null) {
@@ -63,14 +64,22 @@ class AllemployeeFragment : Fragment() {
                 for (companySnapshot in snapshot.children) {
                     val ownerSnapshot = companySnapshot.child("owner")
                     if (ownerSnapshot.child("uid").getValue(String::class.java) == userId) {
-                        foundUserCompanyCode = ownerSnapshot.child("companyCode").getValue(String::class.java)
-                        break
+                        foundUserCompanyCode =
+                            ownerSnapshot.child("companyCode").getValue(String::class.java)
                     }
+
+                    // 모든 회사 데이터를 순회한 후 회사 코드를 설정
+                    if (foundUserCompanyCode != null) {
+                        userCompanyCode = foundUserCompanyCode
+                        loadAllUsers() // 모든 사용자 가져오기
+                    }
+
 
                     val employeesSnapshot = companySnapshot.child("employees")
                     for (employeeSnapshot in employeesSnapshot.children) {
                         if (employeeSnapshot.child("uid").getValue(String::class.java) == userId) {
-                            foundUserCompanyCode = employeeSnapshot.child("companyCode").getValue(String::class.java)
+                            foundUserCompanyCode =
+                                employeeSnapshot.child("companyCode").getValue(String::class.java)
                             break
                         }
                     }
@@ -81,7 +90,6 @@ class AllemployeeFragment : Fragment() {
                         return
                     }
                 }
-                Toast.makeText(context, "회사를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -101,34 +109,68 @@ class AllemployeeFragment : Fragment() {
                     for (companySnapshot in snapshot.children) {
                         // 회사 코드 추출 (owner와 employees에 모두 존재)
                         val ownerSnapshot = companySnapshot.child("owner")
-                        val ownerCompanyCode = ownerSnapshot.child("companyCode").getValue(String::class.java)
+                        val ownerCompanyCode =
+                            ownerSnapshot.child("companyCode").getValue(String::class.java)
 
                         // 회사 코드가 로그인한 사용자의 회사 코드와 일치하는 경우 처리
                         if (ownerCompanyCode == userCompanyCode) {
                             // 사업주 정보 추가
-                            val ownerUsername = ownerSnapshot.child("username").getValue(String::class.java) ?: "알 수 없음"
-                            val ownerRole = "사업주" // 사업주 역할 고정
-                            val ownerEmail = ownerSnapshot.child("email").getValue(String::class.java) ?: "알 수 없음"
-                            val ownerPhone = ownerSnapshot.child("phone").getValue(String::class.java) ?: "알 수 없음"
-                            val ownerCompanyCode = ownerSnapshot.child("companyCode").getValue(String::class.java) ?: ""
+                            val ownerUsername =
+                                ownerSnapshot.child("username").getValue(String::class.java)
+                                    ?: "알 수 없음"
+                            val ownerRole =
+                                ownerSnapshot.child("role").getValue(String::class.java) ?: "알 수 없음"
+                            val ownerEmail =
+                                ownerSnapshot.child("email").getValue(String::class.java)
+                                    ?: "알 수 없음"
+                            val ownerPhone =
+                                ownerSnapshot.child("phone").getValue(String::class.java)
+                                    ?: "알 수 없음"
+                            val ownerCompanyCode =
+                                ownerSnapshot.child("companyCode").getValue(String::class.java)
+                                    ?: ""
 
-                            val owner = Employee(ownerEmail, ownerUsername,  ownerRole, ownerPhone, ownerCompanyCode, "")
+                            val owner = Employee(
+                                ownerEmail,
+                                ownerUsername,
+                                ownerRole,
+                                ownerPhone,
+                                ownerCompanyCode,
+                                ""
+                            )
                             userList.add(owner)
                         }
 
                         // 근로자 정보 추가
                         val employeesSnapshot = companySnapshot.child("employees")
                         for (employeeSnapshot in employeesSnapshot.children) {
-                            val employeeCompanyCode = employeeSnapshot.child("companyCode").getValue(String::class.java)
+                            val employeeCompanyCode =
+                                employeeSnapshot.child("companyCode").getValue(String::class.java)
 
                             // 회사 코드가 로그인한 사용자의 회사 코드와 일치하는 경우 처리
                             if (employeeCompanyCode == userCompanyCode) {
-                                val username = employeeSnapshot.child("username").getValue(String::class.java) ?: "알 수 없음"
-                                val role = employeeSnapshot.child("role").getValue(String::class.java) ?: "알 수 없음" // 역할 기본값 처리
-                                val email = employeeSnapshot.child("email").getValue(String::class.java) ?: "알 수 없음"
-                                val phone = employeeSnapshot.child("phone").getValue(String::class.java) ?: "알 수 없음"
+                                val username =
+                                    employeeSnapshot.child("username").getValue(String::class.java)
+                                        ?: "알 수 없음"
+                                val role =
+                                    employeeSnapshot.child("role").getValue(String::class.java)
+                                        ?: "알 수 없음" // 역할 기본값 처리
+                                val email =
+                                    employeeSnapshot.child("email").getValue(String::class.java)
+                                        ?: "알 수 없음"
+                                val phone =
+                                    employeeSnapshot.child("phone").getValue(String::class.java)
+                                        ?: "알 수 없음"
 
-                                val employee = Employee(email, username, role, phone, employeeCompanyCode ?: "", "", "")
+                                val employee = Employee(
+                                    email,
+                                    username,
+                                    role,
+                                    phone,
+                                    employeeCompanyCode ?: "",
+                                    "",
+                                    ""
+                                )
                                 userList.add(employee)
                             }
                         }
@@ -161,7 +203,8 @@ class AllemployeeFragment : Fragment() {
     ) : ArrayAdapter<Employee>(context, R.layout.item_allemployee, userList) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.item_allemployee, parent, false)
+            val view = convertView ?: LayoutInflater.from(context)
+                .inflate(R.layout.item_allemployee, parent, false)
 
             val employee = userList[position]
 
