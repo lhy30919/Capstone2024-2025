@@ -1,30 +1,29 @@
 package com.capstone.Algan
 
+import android.app.DatePickerDialog
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.capstone.Algan.databinding.FragmentSalaryBinding
+import java.util.Calendar
 
 class SalaryFragment : Fragment() {
 
     private lateinit var tvStartDate: TextView
     private lateinit var tvEndDate: TextView
     private lateinit var spinnerWorker: Spinner
-    private lateinit var etHourlyRate: EditText
-    private lateinit var etDeductions: EditText
-    private lateinit var etWorkHours: EditText
-    private lateinit var btnSetSalary: Button
     private lateinit var salaryAmount: TextView
     private lateinit var worktime: TextView
     private lateinit var totalWorkHours: TextView
@@ -44,10 +43,6 @@ class SalaryFragment : Fragment() {
         tvStartDate = binding.tvStartDate
         tvEndDate = binding.tvEndDate
         spinnerWorker = binding.spinnerWorker
-        etHourlyRate = binding.etHourlyRate
-        etDeductions = binding.etDeductions
-        etWorkHours = binding.etWorkHours
-        btnSetSalary = binding.btnSetSalary
         salaryAmount = binding.salaryAmount
         worktime = binding.worktime
         totalWorkHours = binding.totalWorkHours
@@ -74,22 +69,10 @@ class SalaryFragment : Fragment() {
         workRecordAdapter = WorkRecordAdapter(emptyList()) // 초기 빈 리스트
         recyclerView.adapter = workRecordAdapter
 
-        // 급여 설정 버튼 클릭 리스너
-        btnSetSalary.setOnClickListener {
-            val hourlyRateValue = etHourlyRate.text.toString().toDoubleOrNull() ?: 0.0
-            val deductionsValue = etDeductions.text.toString().toDoubleOrNull() ?: 0.0
-            val workHoursValue = etWorkHours.text.toString().toDoubleOrNull() ?: 0.0
-
-            val totalSalary = hourlyRateValue * workHoursValue
-            val deductionsAmount = totalSalary * (deductionsValue / 100)
-            val finalSalary = totalSalary - deductionsAmount
-
-            // 급여 계산 후 화면에 표시
-            salaryAmount.text = "실 지급액: ${finalSalary}원"
-            worktime.text = "근무시간: 09:00 ~ 18:00" // 예시
-            totalWorkHours.text = "총 근무시간: ${workHoursValue}시간"
-            hourlyRate.text = "시급: ${hourlyRateValue}원"
-            deductions.text = "공제: ${deductionsValue}%"
+        // 급여 입력 다이얼로그 버튼 클릭 리스너
+        val btnShowSalaryInput = binding.btnShowSalaryInput
+        btnShowSalaryInput.setOnClickListener {
+            showSalaryInputDialog()
         }
 
         // 근로자 선택 시 처리
@@ -106,7 +89,73 @@ class SalaryFragment : Fragment() {
             }
         }
 
+        // 날짜 선택을 위한 DatePickerDialog 설정
+        tvStartDate.setOnClickListener {
+            showDatePicker { date ->
+                tvStartDate.text = date
+                //TODO:: 급여 목록 필터
+            }
+        }
+
+        tvEndDate.setOnClickListener {
+            showDatePicker { date ->
+                tvEndDate.text = date
+                //TODO:: 급여 목록 필터
+            }
+        }
+
         return binding.root
+    }
+
+
+    private fun showSalaryInputDialog() {
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(R.layout.dialog_salary_input)
+
+        val etHourlyRate: EditText = dialog.findViewById(R.id.etHourlyRate)
+        val etDeductions: EditText = dialog.findViewById(R.id.etDeductions)
+        val etWorkHours: EditText = dialog.findViewById(R.id.etWorkHours)
+        val btnSetSalary: Button = dialog.findViewById(R.id.btnSetSalary)
+
+        btnSetSalary.setOnClickListener {
+            val hourlyRateValue = etHourlyRate.text.toString().toDoubleOrNull() ?: 0.0
+            val deductionsValue = etDeductions.text.toString().toDoubleOrNull() ?: 0.0
+            val workHoursValue = etWorkHours.text.toString().toDoubleOrNull() ?: 0.0
+
+            val totalSalary = hourlyRateValue * workHoursValue
+            val deductionsAmount = totalSalary * (deductionsValue / 100)
+            val finalSalary = totalSalary - deductionsAmount
+
+            // 급여 계산 후 화면에 표시
+            salaryAmount.text = "실 지급액: ${finalSalary}원"
+            worktime.text = "근무시간: 09:00 ~ 18:00" // 예시
+            totalWorkHours.text = "총 근무시간: ${workHoursValue}시간"
+            hourlyRate.text = "시급: ${hourlyRateValue}원"
+            deductions.text = "공제: ${deductionsValue}%"
+
+            // 다이얼로그 닫기
+            dialog.dismiss()
+        }
+        // 다이얼로그 너비 match_parent
+        dialog.window?.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
+        dialog.show()
+    }
+    // 날짜 선택을 위한 DatePickerDialog 표시
+    private fun showDatePicker(onDateSelected: (String) -> Unit) {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
+            val formattedDate = String.format("%04d년 %02d월 %02d일", selectedYear, selectedMonth + 1, selectedDay)
+            onDateSelected(formattedDate)
+        }, year, month, day)
+
+        datePickerDialog.show()
     }
 
     // 선택된 근로자의 근무 기록을 업데이트하는 메서드
@@ -124,6 +173,7 @@ class SalaryFragment : Fragment() {
         )
         workRecordAdapter.updateData(workRecords)
     }
+
 }
 
 // 근로자 데이터 클래스
