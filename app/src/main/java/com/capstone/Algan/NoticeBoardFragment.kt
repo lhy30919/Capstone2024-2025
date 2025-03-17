@@ -1,45 +1,14 @@
 package com.capstone.Algan.fragments
 
-import android.Manifest
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.capstone.Algan.R
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.DatePicker
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.ListView
-import android.widget.NumberPicker
-import android.widget.TextView
-import android.widget.TimePicker
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.capstone.Algan.CommunicationFragment
 import com.capstone.Algan.DaeTaFragment
 import com.capstone.Algan.NoticeFragment
-import com.capstone.Algan.adapters.ChatAdapter
-import com.capstone.Algan.models.Message
-import com.google.firebase.auth.FirebaseAuth
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class NoticeBoardFragment : Fragment() {
 
