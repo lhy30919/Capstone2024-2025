@@ -66,7 +66,4 @@ class NoticeBoardFragment : Fragment() {
         Buttonunderline(underlineDaeta)
         return view
     }
-
-
-
 }
