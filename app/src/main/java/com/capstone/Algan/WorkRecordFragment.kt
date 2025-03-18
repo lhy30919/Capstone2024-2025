@@ -73,9 +73,9 @@ class WorkRecordFragment : Fragment(R.layout.fragment_workrecord) {
         tvDate.text = currentDate
 
         // 하드코딩된 기록 추가
-        records.add(AttendanceRecordWithTime(1, "2025년 02월 23일", "09:00:00", "18:00:00", "09:00", 1, "근로자1"))
-        records.add(AttendanceRecordWithTime(2, "2025년 02월 23일", "08:30:00", "17:30:00", "09:00", 2, "근로자2"))
-        records.add(AttendanceRecordWithTime(3, "2025년 02월 22일", "09:00:00", "18:00:00", "09:00", 3, "근로자3"))
+        records.add(AttendanceRecordWithTime(1, "2025년 02월 23일", "09:00:00", "18:00:00", "09:00", 1, "근로자1","수동"))
+        records.add(AttendanceRecordWithTime(2, "2025년 02월 23일", "08:30:00", "17:30:00", "09:00", 2, "근로자2","수동"))
+        records.add(AttendanceRecordWithTime(3, "2025년 02월 22일", "09:00:00", "18:00:00", "09:00", 3, "근로자3","비콘"))
 
         val workerList = listOf("전체", "근로자1", "근로자2", "근로자3") // 데이터 예시
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, workerList)
@@ -185,7 +185,8 @@ class WorkRecordFragment : Fragment(R.layout.fragment_workrecord) {
             clockOut = clockOut,
             workedHours = workedHours,
             workerIndex = null, // 필요 없다면 null
-            workerName = workerName // 선택된 근로자 이름 또는 로그인된 사용자 이름
+            workerName = workerName, // 선택된 근로자 이름 또는 로그인된 사용자 이름
+            tvType =    "수동"
         )
 
         records.add(newRecord)
@@ -232,7 +233,8 @@ class WorkRecordFragment : Fragment(R.layout.fragment_workrecord) {
         val clockOut: String, // 퇴근 시간
         val workedHours: String, // 근무 시간
         val workerIndex: Int? = null, // 근로자 구분 (사업주용)
-        val workerName: String? // 근로자 이름 (사업주, 근로자 모두 사용)
+        val workerName: String?, // 근로자 이름 (사업주, 근로자 모두 사용)
+        val tvType:String
     )
 
     // 어댑터 정의
@@ -253,6 +255,8 @@ class WorkRecordFragment : Fragment(R.layout.fragment_workrecord) {
             holder.tvClockOut.text = formatTimeForTable(record.clockOut)
             holder.tvWorkedHours.text = record.workedHours
             holder.tvWorkerName.text = record.workerName // 이름 추가
+            holder.tvType.text = record.tvType
+
         }
 
         override fun getItemCount(): Int {
@@ -272,6 +276,7 @@ class WorkRecordFragment : Fragment(R.layout.fragment_workrecord) {
             val tvClockIn: TextView = itemView.findViewById(R.id.tvClockIn)
             val tvClockOut: TextView = itemView.findViewById(R.id.tvClockOut)
             val tvWorkedHours: TextView = itemView.findViewById(R.id.tvWorkedHours)
+            val tvType : TextView = itemView.findViewById(R.id.tvType)
             val tvWorkerName: TextView = itemView.findViewById(R.id.tvWorkerName) // 이름 표시
         }
 

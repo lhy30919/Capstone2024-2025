@@ -80,4 +80,14 @@
         android:textAlignment="center"
         android:text="08:00"
         android:textSize="14sp" />
+    <!-- 기록구분(비콘,수동) -->
+    <TextView
+        android:id="@+id/tvType"
+        android:layout_width="0dp"
+        android:layout_weight="2"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:textAlignment="center"
+        android:text="수동"
+        android:textSize="14sp" />
 </LinearLayout>
