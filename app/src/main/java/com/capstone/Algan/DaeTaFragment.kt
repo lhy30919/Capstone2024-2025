@@ -38,6 +38,16 @@ class DaeTaFragment : Fragment() {
 
         val listView = view.findViewById<ListView>(R.id.listViewSubstituteRequests)
         val noRequestsTextView = view.findViewById<TextView>(R.id.textNoRequests)
+        // 하드코딩된 대타 요청 추가
+        substituteList.add(
+            SubstituteRequest("2025-03-20 09:00 ~ 12:00", "김철수")
+        )
+        substituteList.add(
+            SubstituteRequest("2025-03-21 14:00 ~ 18:00", "이영희")
+        )
+
+        // 기본적으로 전체 리스트를 보여줌
+        filteredSubstituteList = substituteList.toMutableList()
 
         // Adapter 초기화
         adapter = object : ArrayAdapter<SubstituteRequest>(
