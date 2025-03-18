@@ -20,6 +20,7 @@ class MyPageActivity : AppCompatActivity() {
     private lateinit var companyNameTextView: TextView
     private lateinit var companyCodeTextView: TextView
     private lateinit var userRoleTextView: TextView
+    private lateinit var timeSalaryTextView : TextView
     private lateinit var logoutButton: Button
     private lateinit var editButton: Button
 
@@ -43,6 +44,7 @@ class MyPageActivity : AppCompatActivity() {
         phoneTextView = findViewById(R.id.phoneTextView)
         companyNameTextView = findViewById(R.id.companyNameTextView)
         companyCodeTextView = findViewById(R.id.companyCodeTextView)
+        timeSalaryTextView = findViewById(R.id.timeSalaryTextView)
         logoutButton = findViewById(R.id.logoutButton)
         editButton = findViewById(R.id.editButton)
 
@@ -82,6 +84,7 @@ class MyPageActivity : AppCompatActivity() {
                         userCompanyCode = ownerSnapshot.child("companyCode").getValue(String::class.java)
                         userSnapshot = ownerSnapshot
                         role = "사업주"
+                        timeSalaryTextView.visibility = View.GONE
                         break
                     }
 
@@ -91,6 +94,7 @@ class MyPageActivity : AppCompatActivity() {
                             userCompanyCode = employeeSnapshot.child("companyCode").getValue(String::class.java)
                             userSnapshot = employeeSnapshot
                             role = "근로자"
+                            timeSalaryTextView.visibility = View.VISIBLE
                             break
                         }
                     }
@@ -115,6 +119,8 @@ class MyPageActivity : AppCompatActivity() {
         val phone = userSnapshot.child("phone").getValue(String::class.java) ?: "알 수 없음"
         val companyCode = userCompanyCode ?: "알 수 없음"
         var companyName = "알 수 없음"
+        var timeSalary = userSnapshot.child("salary").getValue(String::class.java)?:"알 수 없음" // 시급
+
 
         for (companySnapshot in snapshot.children) {
             val ownerSnapshot = companySnapshot.child("owner")
@@ -130,6 +136,7 @@ class MyPageActivity : AppCompatActivity() {
         userRoleTextView.text = "$role"
         companyNameTextView.text = "회사 이름: $companyName"
         companyCodeTextView.text = "회사 코드: $companyCode"
+        timeSalaryTextView.text = "시급 : $timeSalary"
     }
 
     private fun toggleEditMode() {
