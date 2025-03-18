@@ -101,6 +101,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="회사 코드: "
+                    android:layout_marginBottom="8dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp" />
+
+                <android.widget.TextView
+                    android:visibility="gone"
+                    android:id="@+id/timeSalaryTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text= "시급 : "
+                    android:layout_marginBottom="8dp"
                     android:textColor="@android:color/black"
                     android:textSize="20sp" />
             </LinearLayout>
