@@ -25,10 +25,7 @@
         <!-- SignUpActivity -->
         <activity android:name=".SignUpActivity"
             android:exported="true" />
-        <!-- InfoActivity -->
-        <activity
-            android:name=".InfoActivity"
-            android:exported="true" />
+
         <!-- MyPageActivity -->
         <activity
             android:name=".MyPageActivity"
