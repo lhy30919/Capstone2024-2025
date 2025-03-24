@@ -55,6 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="수락자: 김철수"
+
                 android:textSize="14sp"
                 android:textColor="@android:color/black" />
         </LinearLayout>
@@ -78,16 +79,8 @@
             android:minWidth="55dp"
             android:minHeight="25dp"
             android:elevation="4dp"
+            android:visibility="gone"
             android:stateListAnimator="@null"/>
 
-        <!-- 승인 버튼 -->
-        <android.widget.Button
-            android:id="@+id/buttonApprove"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="승인"
-            android:textSize="9sp"
-            android:minWidth="55dp"
-            android:minHeight="25dp"/>
     </LinearLayout>
 </LinearLayout>

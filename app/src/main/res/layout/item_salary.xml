@@ -104,7 +104,7 @@
         android:layout_weight="1">
         <!-- 급여계산기 -->
         <android.widget.Button
-            android:id="@+id/btnShowSalaryInputOwner"
+            android:id="@+id/btnSalaryReset"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
