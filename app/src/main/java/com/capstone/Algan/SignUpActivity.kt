@@ -52,6 +52,7 @@ class SignUpActivity : AppCompatActivity() {
                     companyCodeEditText.visibility = EditText.GONE
                     generatedCompanyCodeTextView.visibility = TextView.VISIBLE
                 }
+
                 R.id.employeeRadioButton -> {
                     companyNameEditText.visibility = EditText.GONE
                     companyCodeEditText.visibility = EditText.VISIBLE
@@ -63,13 +64,14 @@ class SignUpActivity : AppCompatActivity() {
         // 회사 이름 입력 필드에 텍스트 변경 리스너 추가
         companyNameEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                if (s != null && s.length >= 3) {
+                if (s != null && s.length >= 1) {
                     val companyCode = generateCompanyCode(s.toString())
                     generatedCompanyCodeTextView.text = "회사 코드: $companyCode"
                 } else {
                     generatedCompanyCodeTextView.text = ""
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
@@ -102,8 +104,16 @@ class SignUpActivity : AppCompatActivity() {
                     Toast.makeText(this, "회사 이름을 입력하세요.", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }
-                val companyCodeWithSuffix = generatedCompanyCodeTextView.text.toString().replace("회사 코드: ", "")
-                signUpAsBusinessOwner(username, password, email, phone, companyName, companyCodeWithSuffix)
+                val companyCodeWithSuffix =
+                    generatedCompanyCodeTextView.text.toString().replace("회사 코드: ", "")
+                signUpAsBusinessOwner(
+                    username,
+                    password,
+                    email,
+                    phone,
+                    companyName,
+                    companyCodeWithSuffix
+                )
             } else if (role == "근로자") {
                 if (companyCode.isEmpty()) {
                     Toast.makeText(this, "회사 코드를 입력하세요.", Toast.LENGTH_SHORT).show()
@@ -115,13 +125,29 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun generateCompanyCode(companyName: String): String {
-        val nameSuffix = companyName.takeLast(3)
-        val randomSuffix = (10000..99999).random().toString()
-        return "$nameSuffix$randomSuffix"
-
+        val companyCode = if (companyName.length < 3) { // 회사 이름이 3자리 미만일 때
+            val nameSuffix = companyName.takeLast(1) // 회사 이름 마지막 1자리 가져오고
+            val randomLetters =
+                ('A'..'Z').random().toString() + ('A'..'Z').random().toString() //랜덤한 두자리 알파벳 추가
+            val randomSuffix = (10000..99999).random().toString()
+            "$nameSuffix$randomLetters$randomSuffix"
+        } else {
+            val nameSuffix = companyName.takeLast(3)
+            val randomSuffix = (10000..99999).random().toString()
+            "$nameSuffix$randomSuffix"
+        }
+        return companyCode
     }
 
-    private fun signUpAsBusinessOwner(username: String, password: String, email: String, phone: String, companyName: String, companyCode: String) {
+
+    private fun signUpAsBusinessOwner(
+        username: String,
+        password: String,
+        email: String,
+        phone: String,
+        companyName: String,
+        companyCode: String
+    ) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
@@ -141,7 +167,8 @@ class SignUpActivity : AppCompatActivity() {
 
                     val databaseRef = database.reference
                     val userRef = databaseRef.child("users").child(userId)  // users/{uid} 저장
-                    val companyRef = databaseRef.child("companies").child(companyCode).child("owner")  // companies/{companyCode}/owner 저장
+                    val companyRef = databaseRef.child("companies").child(companyCode)
+                        .child("owner")  // companies/{companyCode}/owner 저장
 
                     // Firebase에 동시에 저장
                     val updates = hashMapOf<String, Any>(
@@ -162,16 +189,24 @@ class SignUpActivity : AppCompatActivity() {
                             finish()
                         }
                         .addOnFailureListener { e ->
-                            Toast.makeText(this, "데이터 저장 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "데이터 저장 실패: ${e.message}", Toast.LENGTH_SHORT)
+                                .show()
                         }
                 } else {
-                    Toast.makeText(this, "회원가입 실패: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "회원가입 실패: ${task.exception?.message}", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
     }
 
 
-    private fun signUpAsEmployee(username: String, password: String, email: String, phone: String, companyCode: String) {
+    private fun signUpAsEmployee(
+        username: String,
+        password: String,
+        email: String,
+        phone: String,
+        companyCode: String
+    ) {
         isCompanyCodeValid(companyCode) { isValid ->
             if (isValid) {
                 auth.createUserWithEmailAndPassword(email, password)
@@ -193,8 +228,11 @@ class SignUpActivity : AppCompatActivity() {
                             )
 
                             val databaseRef = database.reference
-                            val userRef = databaseRef.child("users").child(userId)  // users/{uid} 저장
-                            val companyRef = databaseRef.child("companies").child(companyCode).child("employees").child(userId)  // companies/{companyCode}/employees/{uid} 저장
+                            val userRef =
+                                databaseRef.child("users").child(userId)  // users/{uid} 저장
+                            val companyRef =
+                                databaseRef.child("companies").child(companyCode).child("employees")
+                                    .child(userId)  // companies/{companyCode}/employees/{uid} 저장
 
                             // Firebase에 동시에 저장
                             val updates = hashMapOf<String, Any>(
@@ -215,10 +253,18 @@ class SignUpActivity : AppCompatActivity() {
                                     finish()
                                 }
                                 .addOnFailureListener { e ->
-                                    Toast.makeText(this, "데이터 저장 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        this,
+                                        "데이터 저장 실패: ${e.message}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                         } else {
-                            Toast.makeText(this, "회원가입 실패: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this,
+                                "회원가입 실패: ${task.exception?.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
             } else {
@@ -251,8 +297,13 @@ class SignUpActivity : AppCompatActivity() {
     }
 
 
-
-    private fun saveUserData(username: String, email: String, phone: String?, companyName: String?, companyCode: String) {
+    private fun saveUserData(
+        username: String,
+        email: String,
+        phone: String?,
+        companyName: String?,
+        companyCode: String
+    ) {
         val sharedPreferences = getSharedPreferences("UserData", MODE_PRIVATE)
         val editor = sharedPreferences.edit()
 
