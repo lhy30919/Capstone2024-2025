@@ -28,6 +28,9 @@ class SalaryFragment : Fragment() {
     private lateinit var tvrate2:TextView
     private lateinit var tvrate3:TextView
     private lateinit var tvrate4:TextView
+    private lateinit var tvrate5:TextView
+    private lateinit var tvrate6:TextView
+    private lateinit var tvrate7:TextView
 
 
 
@@ -64,6 +67,9 @@ class SalaryFragment : Fragment() {
         tvrate2 = binding.tvrate2
         tvrate3 = binding.tvrate3
         tvrate4 = binding.tvrate4
+        tvrate5 = binding.tvrate5
+        tvrate6 = binding.tvrate6
+        tvrate7 = binding.tvrate7
 
 
 
@@ -147,28 +153,80 @@ class SalaryFragment : Fragment() {
         val etHourlyRate: EditText = dialog.findViewById(R.id.etHourlyRateWhole)
         val etDeductions: EditText = dialog.findViewById(R.id.etDeductionsWhole)
         val btnSetSalary: Button = dialog.findViewById(R.id.btnSetSalaryWhole)
-        val etRate1:EditText = dialog.findViewById(R.id.etRate1)
-        val etRate2:EditText = dialog.findViewById(R.id.etRate2)
-        val etRate3:EditText = dialog.findViewById(R.id.etRate3)
-        val etRate4:EditText = dialog.findViewById(R.id.etRate4)
+        val etRate1: EditText = dialog.findViewById(R.id.etRate1)
+        val etRate2: EditText = dialog.findViewById(R.id.etRate2)
+        val etRate3: EditText = dialog.findViewById(R.id.etRate3)
+        val etRate4: EditText = dialog.findViewById(R.id.etRate4)
+        val etRate5: EditText = dialog.findViewById(R.id.etRate5)
+        val etRate6: EditText = dialog.findViewById(R.id.etRate6)
+        val etRate7: EditText = dialog.findViewById(R.id.etRate7)
+        val cbRate: CheckBox = dialog.findViewById(R.id.cbRate)  // CheckBox 참조 추가
 
+        // CheckBox 상태에 따라 EditText 활성화/비활성화 설정
+        cbRate.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                etDeductions.isEnabled = false
+                etRate1.isEnabled = true
+                etRate2.isEnabled = true
+                etRate3.isEnabled = true
+                etRate4.isEnabled = true
+                etRate5.isEnabled = true
+                etRate6.isEnabled = true
+                etRate7.isEnabled = true
+            } else {
+                etDeductions.isEnabled = true
+                etRate1.isEnabled = false
+                etRate2.isEnabled = false
+                etRate3.isEnabled = false
+                etRate4.isEnabled = false
+                etRate5.isEnabled = false
+                etRate6.isEnabled = false
+                etRate7.isEnabled = false
+            }
+        }
 
+        // 초기 상태 설정
+        if (cbRate.isChecked) {
+            etDeductions.isEnabled = false
+            etRate1.isEnabled = true
+            etRate2.isEnabled = true
+            etRate3.isEnabled = true
+            etRate4.isEnabled = true
+            etRate5.isEnabled = true
+            etRate6.isEnabled = true
+            etRate7.isEnabled = true
+        } else {
+            etDeductions.isEnabled = true
+            etRate1.isEnabled = false
+            etRate2.isEnabled = false
+            etRate3.isEnabled = false
+            etRate4.isEnabled = false
+            etRate5.isEnabled = false
+            etRate6.isEnabled = false
+            etRate7.isEnabled = false
+        }
 
         btnSetSalary.setOnClickListener {
             val hourlyRateValue = etHourlyRate.text.toString().toDoubleOrNull() ?: 0.0
             val deductionsValue = etDeductions.text.toString().toDoubleOrNull() ?: 0.0
-            val etRate1Value =  etRate1.text.toString().toDoubleOrNull()?:0.0
-            val etRate2Value =  etRate2.text.toString().toDoubleOrNull()?:0.0
-            val etRate3Value =  etRate3.text.toString().toDoubleOrNull()?:0.0
-            val etRate4Value =  etRate4.text.toString().toDoubleOrNull()?:0.0
+            val etRate1Value = etRate1.text.toString().toDoubleOrNull() ?: 0.0
+            val etRate2Value = etRate2.text.toString().toDoubleOrNull() ?: 0.0
+            val etRate3Value = etRate3.text.toString().toDoubleOrNull() ?: 0.0
+            val etRate4Value = etRate4.text.toString().toDoubleOrNull() ?: 0.0
+            val etRate5Value = etRate5.text.toString().toDoubleOrNull() ?: 0.0
+            val etRate6Value = etRate6.text.toString().toDoubleOrNull() ?: 0.0
+            val etRate7Value = etRate7.text.toString().toDoubleOrNull() ?: 0.0
             // 급여 계산 후 화면에 표시
             worktime.text = "근무시간: 09:00 ~ 18:00" // 예시
             hourlyRate.text = "시급: ${hourlyRateValue}원"
             deductions.text = "공제: ${deductionsValue}%"
-            tvrate1.text = "비율1 : ${etRate1Value}"
-            tvrate2.text = "비율1 : ${etRate2Value}"
-            tvrate3.text = "비율1 : ${etRate3Value}"
-            tvrate4.text = "비율1 : ${etRate4Value}"
+            tvrate1.text = "국민연금 : ${etRate1Value}"
+            tvrate2.text = "건강보험 : ${etRate2Value}"
+            tvrate3.text = "고용보험 : ${etRate3Value}"
+            tvrate4.text = "산재보험 : ${etRate4Value}"
+            tvrate5.text = "장기요양보험 : ${etRate5Value}"
+            tvrate6.text = "소득세 : ${etRate6Value}"
+            tvrate7.text = "기타 : ${etRate7Value}"
             // 다이얼로그 닫기
             dialog.dismiss()
         }
@@ -181,6 +239,8 @@ class SalaryFragment : Fragment() {
 
         dialog.show()
     }
+
+
 
     private fun showSalaryInputDialog() {
         val dialog = Dialog(requireContext())
