@@ -26,10 +26,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-
 // 소통 화면 프래그먼트
 class CommunicationFragment : Fragment() {
-
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var editTextMessage: EditText
@@ -51,8 +49,10 @@ class CommunicationFragment : Fragment() {
                 permissions[Manifest.permission.WRITE_EXTERNAL_STORAGE] ?: false
             val readPermissionGranted =
                 permissions[Manifest.permission.READ_EXTERNAL_STORAGE] ?: false
+            val cameraPermissionGranted =
+                permissions[Manifest.permission.CAMERA] ?: false
 
-            if (writePermissionGranted && readPermissionGranted) {
+            if (writePermissionGranted && readPermissionGranted && cameraPermissionGranted) {
                 // 권한이 허용되면 카메라나 갤러리 열기
                 showImagePickerDialog()
             } else {
@@ -118,7 +118,8 @@ class CommunicationFragment : Fragment() {
             requestPermissionLauncher.launch(
                 arrayOf(
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.CAMERA
                 )
             )
         }
