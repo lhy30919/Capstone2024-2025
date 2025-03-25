@@ -79,8 +79,9 @@
             android:minWidth="55dp"
             android:minHeight="25dp"
             android:elevation="4dp"
-            android:visibility="gone"
-            android:stateListAnimator="@null"/>
+            android:visibility="visible"
+            android:stateListAnimator="@null"/>        <!-- 수락 버튼 -->
+
 
     </LinearLayout>
 </LinearLayout>

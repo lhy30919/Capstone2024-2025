@@ -40,13 +40,44 @@
 
     <!-- 나의 대타 요청, 나의 대타 수락, 대타 신청 버튼 -->
     <LinearLayout
+        android:id="@+id/LinownerDaeta"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:paddingTop="3dp"
+        android:visibility="visible"
         android:gravity="center_vertical"
         android:orientation="horizontal">
-
         <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1">
+
+            <!-- 나의 대타 수락 내역 버튼 -->
+            <android.widget.Button
+                android:id="@+id/buttonAllSubstituteRequests"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@color/noticeboard_background"
+                android:text="전체 대타"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="14dp"
+                android:tint="@color/noticeboard_background" />
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:background="@color/secondary_text"
+                android:elevation="3dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="5dp"
+                android:visibility="visible"/>
+        </FrameLayout>
+        <!-- 나의 대타요청은 근로자만 보이게-->
+        <FrameLayout
+            android:id="@+id/frameDaetaRequest"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

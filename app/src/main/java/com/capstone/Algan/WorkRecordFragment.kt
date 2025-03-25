@@ -35,6 +35,8 @@ class WorkRecordFragment : Fragment(R.layout.fragment_workrecord) {
     private var isClockedIn = false
     private var clockInTime: String? = null
     private var clockOutTime: String? = null
+    private var tvType: String?= null
+
 
     private lateinit var recordAdapter: RecordAdapter
     private val records = mutableListOf<AttendanceRecordWithTime>()
@@ -92,6 +94,7 @@ class WorkRecordFragment : Fragment(R.layout.fragment_workrecord) {
                 btnClockInOut.text = "출근"
                 btnClockInOut.backgroundTintList = ContextCompat.getColorStateList(requireContext(), android.R.color.holo_green_light)
                 isClockedIn = false
+                tvType = "수동"
             } else {
                 clockInTime = getCurrentTime()
                 tvClockIn.text = "출근 시간: $clockInTime"
@@ -100,6 +103,7 @@ class WorkRecordFragment : Fragment(R.layout.fragment_workrecord) {
                 btnClockInOut.text = "퇴근"
                 btnClockInOut.backgroundTintList = ContextCompat.getColorStateList(requireContext(), android.R.color.holo_red_light)
                 isClockedIn = true
+                tvType = "수동"
             }
         }
 
@@ -186,7 +190,7 @@ class WorkRecordFragment : Fragment(R.layout.fragment_workrecord) {
             workedHours = workedHours,
             workerIndex = null, // 필요 없다면 null
             workerName = workerName, // 선택된 근로자 이름 또는 로그인된 사용자 이름
-            tvType =    "수동"
+            tvType =    tvType
         )
 
         records.add(newRecord)
@@ -234,7 +238,7 @@ class WorkRecordFragment : Fragment(R.layout.fragment_workrecord) {
         val workedHours: String, // 근무 시간
         val workerIndex: Int? = null, // 근로자 구분 (사업주용)
         val workerName: String?, // 근로자 이름 (사업주, 근로자 모두 사용)
-        val tvType:String
+        val tvType:String?
     )
 
     // 어댑터 정의
