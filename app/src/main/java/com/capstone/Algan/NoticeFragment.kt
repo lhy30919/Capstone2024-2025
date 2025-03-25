@@ -6,9 +6,9 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,48 +23,42 @@ import androidx.recyclerview.widget.RecyclerView
 import com.capstone.Algan.adapters.ChatAdapter
 import com.capstone.Algan.models.Message
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
-
-// 공지 화면 프래그먼트
-class NoticeFragment : Fragment() { //TODO::사업주만 작성가능하게
+class NoticeFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var editTextMessage: EditText // 글
-    private lateinit var buttonSend: Button //보내기 버튼
-    private lateinit var buttonAttach: Button // 사진 첨부 버튼
-    private lateinit var imageViewPreview: ImageView //사진 보내기전에 미리보기
+    private lateinit var editTextMessage: EditText
+    private lateinit var buttonSend: Button
+    private lateinit var buttonAttach: Button
+    private lateinit var imageViewPreview: ImageView
     private lateinit var chatAdapter: ChatAdapter
-    private var selectedImageUri: Uri? = null // 선택한(보낼)사진 URI
-
+    private var selectedImageUri: Uri? = null
     private val messageList = mutableListOf<Message>()
 
+    private lateinit var userRole: String
+    private lateinit var companyCode: String
+
+    // 요청 코드 상수 정의
     private val GALLERY_REQUEST_CODE = 100
     private val CAMERA_REQUEST_CODE = 101
 
-    // 권한 요청(카메라, 갤러리)
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            val writePermissionGranted =
+                permissions[Manifest.permission.WRITE_EXTERNAL_STORAGE] ?: false
             val readPermissionGranted =
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    permissions[Manifest.permission.READ_MEDIA_IMAGES] ?: false
-                } else {
-                    permissions[Manifest.permission.READ_EXTERNAL_STORAGE] ?: false
-                }
-            val cameraPermissionGranted =
-                permissions[Manifest.permission.CAMERA] ?: false
+                permissions[Manifest.permission.READ_EXTERNAL_STORAGE] ?: false
 
-            if (readPermissionGranted && cameraPermissionGranted) {
-                // 권한이 허용되면 카메라나 갤러리 열기
+            if (writePermissionGranted && readPermissionGranted) {
                 showImagePickerDialog()
             } else {
                 Toast.makeText(requireContext(), "권한이 거부되었습니다.", Toast.LENGTH_SHORT).show()
             }
         }
 
-    @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -86,98 +80,160 @@ class NoticeFragment : Fragment() { //TODO::사업주만 작성가능하게
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = chatAdapter
 
+        // 현재 로그인한 사용자 UID 가져오기
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        val employeeDatabase = FirebaseDatabase.getInstance().reference.child("companies")
+
+        // 사용자 UID를 사용하여 회사 코드 찾기
+        employeeDatabase.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                var companyFound = false // 회사 찾기 플래그
+                for (companySnapshot in snapshot.children) {
+                    val ownerUid = companySnapshot.child("owner/uid").getValue(String::class.java)
+                    val employeesSnapshot = companySnapshot.child("employees")
+
+                    if (userId == ownerUid) {
+                        // 사업주인 경우
+                        companyCode = companySnapshot.key.toString()
+                        userRole = "사업주" // 역할 설정
+                        loadMessages() // 메시지 로드
+                        companyFound = true
+                        break
+                    } else if (employeesSnapshot.hasChild(userId!!)) {
+                        // 근로자인 경우
+                        companyCode = companySnapshot.key.toString()
+                        userRole = "근로자" // 역할 설정
+                        loadMessages() // 메시지 로드
+                        companyFound = true
+                        break
+                    }
+                }
+                if (!companyFound) {
+                    Log.d("NoticeFragment", "사용자가 속한 회사가 없습니다.")
+                    Toast.makeText(requireContext(), "사용자가 속한 회사가 없습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("Firebase", "Error retrieving user role: ${error.message}")
+            }
+        })
+
         // 메시지 보내기 버튼 클릭 처리
         buttonSend.setOnClickListener {
-            val messageText = editTextMessage.text.toString()
-            if (messageText.isNotEmpty() || selectedImageUri != null) {
-                // 메시지 추가
-                val message = Message(
-                    content = messageText,
-                    timestamp = getCurrentTimestamp(), // 현재 시간
-                    username = currentUser, // 현재 사용자 이름
-                    profileImageUrl = getProfileImageUrl(), // 프로필 이미지 URL 설정
-                    imageUri = selectedImageUri?.toString() // 이미지 URI가 있을 경우 추가
-                )
-                messageList.add(message)
+            if (!::userRole.isInitialized) {
+                Toast.makeText(requireContext(), "사용자 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
-                // RecyclerView 갱신
-                chatAdapter.notifyItemInserted(messageList.size - 1)
+            if (userRole == "사업주") {
+                val messageText = editTextMessage.text.toString()
+                if (messageText.isNotEmpty() || selectedImageUri != null) {
+                    val message = Message(
+                        content = messageText,
+                        timestamp = getCurrentTimestamp(),
+                        username = currentUser,
+                        profileImageUrl = getProfileImageUrl(),
+                        imageUri = selectedImageUri?.toString(),
+                        companyCode = companyCode // 사업주 메시지 전송
+                    )
 
-                // 입력란 비우기
-                editTextMessage.text.clear()
+                    saveMessageToFirebase(message)
+                    messageList.add(message)
+                    chatAdapter.notifyItemInserted(messageList.size - 1)
 
-                // 이미지 URI 초기화
-                selectedImageUri = null
-                // 사진 미리보기 초기화 (+보이지 않게 설정)
-                imageViewPreview.setImageDrawable(null)
-                imageViewPreview.visibility = View.GONE
-                // 메시지 자동 스크롤
-                recyclerView.scrollToPosition(messageList.size - 1)
+                    // 입력 필드 초기화
+                    editTextMessage.text.clear()
+                    selectedImageUri = null
+                    imageViewPreview.setImageDrawable(null)
+                    imageViewPreview.visibility = View.GONE
+                    recyclerView.scrollToPosition(messageList.size - 1)
+                }
+            } else {
+                Toast.makeText(requireContext(), "근로자는 메시지를 보낼 수 없습니다.", Toast.LENGTH_SHORT).show()
             }
         }
 
         // 사진 첨부 버튼 클릭 처리
         buttonAttach.setOnClickListener {
-            // 권한 요청
             requestPermissionLauncher.launch(
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    arrayOf(
-                        Manifest.permission.READ_MEDIA_IMAGES,
-                        Manifest.permission.CAMERA
-                    )
-                } else {
-                    arrayOf(
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.CAMERA
-                    )
-                }
+                arrayOf(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                )
             )
         }
 
         return view
     }
 
-    // 현재 시간 반환 (예시: "2025-02-07 10:00:00" 형식)
+
+
+    private fun saveMessageToFirebase(message: Message) {
+        val messageId = FirebaseDatabase.getInstance().reference.child("companies").child(companyCode)
+            .child("messages").push().key
+        if (messageId != null) {
+            FirebaseDatabase.getInstance().reference.child("companies").child(companyCode)
+                .child("messages").child(messageId).setValue(message)
+        }
+    }
+
+
+    private fun loadMessages() {
+        FirebaseDatabase.getInstance().reference.child("companies").child(companyCode)
+            .child("messages").addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    messageList.clear()
+                    for (messageSnapshot in snapshot.children) {
+                        val message = messageSnapshot.getValue(Message::class.java)
+                        if (message != null) {
+                            messageList.add(message)
+                        }
+                    }
+                    chatAdapter.notifyDataSetChanged()
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("Firebase", "Error loading messages: ${error.message}")
+                }
+            })
+    }
+
+
     private fun getCurrentTimestamp(): String {
         val currentTime = System.currentTimeMillis()
         val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         return formatter.format(Date(currentTime))
     }
 
-    // 프로필 이미지 URL을 가져오는 방법 (예시, Firebase에서 가져올 수 있음)
     private fun getProfileImageUrl(): String {
-        // 예시로 Firebase에서 프로필 이미지 URL을 가져온다고 가정
         return FirebaseAuth.getInstance().currentUser?.photoUrl?.toString() ?: "기본 이미지 URL"
     }
 
-    // 갤러리에서 이미지 선택하기
     private fun openGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         intent.type = "image/*"
         startActivityForResult(intent, GALLERY_REQUEST_CODE)
     }
 
-    // 카메라로 사진 찍기
     private fun openCamera() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         startActivityForResult(intent, CAMERA_REQUEST_CODE)
     }
 
-    // 이미지 선택 방법을 고를 수 있는 다이얼로그 표시
     private fun showImagePickerDialog() {
         val options = arrayOf("갤러리에서 선택", "카메라로 사진 찍기")
         android.app.AlertDialog.Builder(requireContext())
             .setTitle("사진 선택 방법")
             .setItems(options) { _, which ->
                 when (which) {
-                    0 -> openGallery() // 갤러리 선택
-                    1 -> openCamera()  // 카메라 촬영
+                    0 -> openGallery()
+                    1 -> openCamera()
                 }
             }
             .show()
     }
 
-    // 이미지 선택 결과 처리
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -185,8 +241,7 @@ class NoticeFragment : Fragment() { //TODO::사업주만 작성가능하게
             when (requestCode) {
                 GALLERY_REQUEST_CODE -> {
                     data?.data?.let { uri ->
-                        selectedImageUri = uri // 갤러리에서 선택된 이미지 URI
-                        // 사진 미리보기 표시
+                        selectedImageUri = uri
                         imageViewPreview.visibility = View.VISIBLE
                         imageViewPreview.setImageURI(selectedImageUri)
                     }
@@ -194,14 +249,12 @@ class NoticeFragment : Fragment() { //TODO::사업주만 작성가능하게
 
                 CAMERA_REQUEST_CODE -> {
                     data?.extras?.get("data")?.let { image ->
-                        val tempUri = getImageUri(image) // 촬영한 사진 URI 변환
+                        val tempUri = getImageUri(image)
                         if (tempUri != Uri.EMPTY) {
                             selectedImageUri = tempUri
-                            // 사진 미리보기 표시
                             imageViewPreview.visibility = View.VISIBLE
                             imageViewPreview.setImageURI(selectedImageUri)
                         } else {
-                            // 사진 URI가 제대로 생성되지 않은 경우 처리
                             Toast.makeText(requireContext(), "사진 URI 생성 실패", Toast.LENGTH_SHORT)
                                 .show()
                         }
@@ -211,18 +264,15 @@ class NoticeFragment : Fragment() { //TODO::사업주만 작성가능하게
         }
     }
 
-    // 카메라에서 찍은 이미지를 Uri로 변환
     private fun getImageUri(image: Any): Uri {
         val imageBitmap = image as Bitmap
         val path = MediaStore.Images.Media.insertImage(
             requireContext().contentResolver, imageBitmap, "Captured Image", null
         )
 
-        // path가 null인 경우 처리
         return if (path != null) {
             Uri.parse(path)
         } else {
-            // path가 null이면 예외를 피하고 기본 Uri를 반환하도록 처리
             Uri.EMPTY
         }
     }
