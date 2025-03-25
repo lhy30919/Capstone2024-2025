@@ -71,7 +71,7 @@
                         android:layout_height="wrap_content"
                         android:paddingTop="5dp"
                         android:text="실 지급액: 0원"
-                        android:textSize="20dp"
+                        android:textSize="30dp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -80,7 +80,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
                         android:text="근무시간: 00:00 ~ 00:00"
-                        android:textSize="20dp" />
+                        android:textSize="25dp" />
 
                     <TextView
                         android:id="@+id/totalWorkHours"
@@ -88,7 +88,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:text="총 근무시간: 00시간"
-                        android:textSize="20dp" />
+                        android:textSize="25dp" />
 
                     <TextView
                         android:id="@+id/hourlyRate"
@@ -96,7 +96,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:text="시급: 0원"
-                        android:textSize="20dp" />
+                        android:textSize="25dp" />
 
                     <TextView
                         android:id="@+id/deductions"
@@ -104,7 +104,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:text="공제: 00%"
-                        android:textSize="20dp" />
+                        android:textSize="25dp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -120,56 +120,56 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="세부 공제 내역"
-                            android:textSize="15dp" />
+                            android:textSize="20dp" />
 
                         <TextView
                             android:id="@+id/tvrate1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="건강보험"
-                            android:textSize="15dp" />
+                            android:text="국민연금"
+                            android:textSize="20dp" />
 
                         <TextView
                             android:id="@+id/tvrate2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="건강보험"
-                            android:textSize="15dp" />
+                            android:textSize="20dp" />
 
                         <TextView
                             android:id="@+id/tvrate3"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="건강보험"
-                            android:textSize="15dp" />
+                            android:text="고용보험"
+                            android:textSize="20dp" />
 
                         <TextView
                             android:id="@+id/tvrate4"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="건강보험"
-                            android:textSize="15dp" />
+                            android:text="산재보험"
+                            android:textSize="20dp" />
 
                         <TextView
                             android:id="@+id/tvrate5"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="건강보험"
-                            android:textSize="15dp" />
+                            android:text="장기요양보험"
+                            android:textSize="20dp" />
 
                         <TextView
                             android:id="@+id/tvrate6"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="건강보험"
-                            android:textSize="15dp" />
+                            android:text="소득세"
+                            android:textSize="20dp" />
 
                         <TextView
                             android:id="@+id/tvrate7"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="건강보험"
-                            android:textSize="15dp" />
+                            android:text="기타"
+                            android:textSize="20dp" />
 
                     </LinearLayout>
                 </LinearLayout>
@@ -239,17 +239,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- 전체 시급 공제 설정(사업주만) -->
-    <android.widget.Button
-        android:id="@+id/btnShowSalaryInputOwner"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_gravity="top|end"
-        android:layout_marginTop="150dp"
-        android:layout_marginRight="16dp"
-        android:background="@drawable/circle_button"
-        android:text="전체 공제" />
-
     <!-- Fixed button -->
     <android.widget.Button
         android:id="@+id/btnShowSalaryInput"
@@ -259,6 +248,15 @@
         android:layout_marginTop="100dp"
         android:layout_marginRight="16dp"
         android:background="@drawable/circle_button"
-        android:text="급여 계산기" />
-
+        android:text="급여\n계산기" />
+    <!-- 전체 시급 공제 설정(사업주만) -->
+    <android.widget.Button
+        android:id="@+id/btnShowSalaryInputOwner"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="150dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/circle_button"
+        android:text="전체\n공제" />
 </FrameLayout>

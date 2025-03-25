@@ -51,7 +51,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="공제 비율 (%)"
+        android:text="국민연금 (%)"
         android:textSize="16sp" />
 
     <EditText
@@ -63,7 +63,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="공제 비율 (%)"
+        android:text="건강보험 (%)"
         android:textSize="16sp" />
 
     <EditText
@@ -75,7 +75,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="공제 비율 (%)"
+        android:text="고용보험 (%)"
         android:textSize="16sp" />
 
     <EditText
@@ -87,7 +87,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="공제 비율 (%)"
+        android:text="산재보험 (%)"
         android:textSize="16sp" />
 
     <EditText
@@ -99,7 +99,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="공제 비율 (%)"
+        android:text="장기요양보험 (%)"
         android:textSize="16sp" />
 
     <EditText
@@ -108,7 +108,30 @@
         android:layout_height="wrap_content"
         android:hint="공제 비율을 입력하세요"
         android:inputType="numberDecimal" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="소득세 (%)"
+        android:textSize="16sp" />
 
+    <EditText
+        android:id="@+id/etRate6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="공제 비율을 입력하세요"
+        android:inputType="numberDecimal" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="기타 (%)"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/etRate7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="공제 비율을 입력하세요"
+        android:inputType="numberDecimal" />
 
     <android.widget.Button
         android:id="@+id/btnSetSalaryWhole"
