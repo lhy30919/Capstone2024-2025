@@ -1,5 +1,6 @@
 package com.capstone.Algan
 
+import android.app.DatePickerDialog
 import android.app.Dialog
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.capstone.Algan.databinding.FragmentSalaryBinding
+import java.util.Calendar
 
 class SalaryFragment : Fragment() {
 
@@ -71,9 +73,39 @@ class SalaryFragment : Fragment() {
         tvrate5 = binding.tvrate5
         tvrate6 = binding.tvrate6
         tvrate7 = binding.tvrate7
+        // 날짜 선택을 위한 DatePickerDialog 표시
+        fun showDatePicker(onDateSelected: (String) -> Unit) {
+            val calendar = Calendar.getInstance()
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
 
+            val datePickerDialog =
+                DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
+                    val formattedDate = String.format(
+                        "%04d년 %02d월 %02d일",
+                        selectedYear,
+                        selectedMonth + 1,
+                        selectedDay
+                    )
+                    onDateSelected(formattedDate)
+                }, year, month, day)
 
+            datePickerDialog.show()
+        }
 
+        // 날짜 선택을 위한 DatePickerDialog 설정
+        tvStartDate.setOnClickListener {
+            showDatePicker { date ->
+                tvStartDate.text = date
+            }
+        }
+
+        tvEndDate.setOnClickListener {
+            showDatePicker { date ->
+                tvEndDate.text = date
+            }
+        }
 
         recyclerView.layoutManager = LinearLayoutManager(context)
 
