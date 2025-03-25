@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -16,6 +17,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -45,14 +47,12 @@ class CommunicationFragment : Fragment() {
     // 권한 요청을 위한 ActivityResultContracts
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            val writePermissionGranted =
-                permissions[Manifest.permission.WRITE_EXTERNAL_STORAGE] ?: false
             val readPermissionGranted =
-                permissions[Manifest.permission.READ_EXTERNAL_STORAGE] ?: false
+                permissions[Manifest.permission.READ_MEDIA_IMAGES] ?: false
             val cameraPermissionGranted =
                 permissions[Manifest.permission.CAMERA] ?: false
 
-            if (writePermissionGranted && readPermissionGranted && cameraPermissionGranted) {
+            if (readPermissionGranted && cameraPermissionGranted) {
                 // 권한이 허용되면 카메라나 갤러리 열기
                 showImagePickerDialog()
             } else {
@@ -116,11 +116,17 @@ class CommunicationFragment : Fragment() {
         buttonAttach.setOnClickListener {
             // 권한 요청
             requestPermissionLauncher.launch(
-                arrayOf(
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.CAMERA
-                )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    arrayOf(
+                        Manifest.permission.READ_MEDIA_IMAGES,
+                        Manifest.permission.CAMERA
+                    )
+                } else {
+                    arrayOf(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.CAMERA
+                    )
+                }
             )
         }
 
