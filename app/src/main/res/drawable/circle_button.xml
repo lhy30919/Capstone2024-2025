@@ -1,4 +1,5 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <solid android:color="@color/noticeboard_background"/>
+
     <corners android:radius="500dp"/>
 </shape>

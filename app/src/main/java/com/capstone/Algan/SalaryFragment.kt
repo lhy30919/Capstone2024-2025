@@ -33,7 +33,7 @@ class SalaryFragment : Fragment() {
     private lateinit var tvrate7: TextView
 
 
-    private val isBusinessOwner = true // 사업주 테스트
+    private val isBusinessOwner = false // 사업주 테스트
     //private val isBusinessOwner = false // 근로자 테스트
 
     private lateinit var workerList: List<Worker> // 근로자 목록

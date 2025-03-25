@@ -239,7 +239,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Fixed button -->
+    <!-- 급여 계산기 -->
     <android.widget.Button
         android:id="@+id/btnShowSalaryInput"
         android:layout_width="50dp"
@@ -255,7 +255,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_gravity="top|end"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="160dp"
         android:layout_marginRight="16dp"
         android:background="@drawable/circle_button"
         android:text="전체\n공제" />
