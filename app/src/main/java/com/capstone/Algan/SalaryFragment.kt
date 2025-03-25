@@ -230,13 +230,13 @@ class SalaryFragment : Fragment() {
             hourlyRate.text = "시급: ${hourlyRateValue}원"
 
             if (cbRate.isChecked) {
-                tvrate1.text = "국민연금 : ${etRate1Value}"
-                tvrate2.text = "건강보험 : ${etRate2Value}"
-                tvrate3.text = "고용보험 : ${etRate3Value}"
-                tvrate4.text = "산재보험 : ${etRate4Value}"
-                tvrate5.text = "장기요양보험 : ${etRate5Value}"
-                tvrate6.text = "소득세 : ${etRate6Value}"
-                tvrate7.text = "기타 : ${etRate7Value}"
+                tvrate1.text = "국민연금 : ${etRate1Value} %"
+                tvrate2.text = "건강보험 : ${etRate2Value} %"
+                tvrate3.text = "고용보험 : ${etRate3Value} %"
+                tvrate4.text = "산재보험 : ${etRate4Value} %"
+                tvrate5.text = "장기요양보험 : ${etRate5Value} %"
+                tvrate6.text = "소득세 : ${etRate6Value} %"
+                tvrate7.text = "기타 : ${etRate7Value} %"
                 deductions.text = "공제: ${totalRate}%"
             } else {
                 deductions.text = "공제: ${deductionsValue}%"
@@ -404,41 +404,101 @@ class SalaryRecordAdapter(
         val etDeductionsEmp: EditText = dialog.findViewById(R.id.etDeductionsEmp)
         val etWorkHoursEmp: EditText = dialog.findViewById(R.id.etWorkHoursEmp)
         val btnSetSalaryEmp: Button = dialog.findViewById(R.id.btnSetSalaryEmp)
+        val etRate1Emp: EditText = dialog.findViewById(R.id.etRate1Emp)
+        val etRate2Emp: EditText = dialog.findViewById(R.id.etRate2Emp)
+        val etRate3Emp: EditText = dialog.findViewById(R.id.etRate3Emp)
+        val etRate4Emp: EditText = dialog.findViewById(R.id.etRate4Emp)
+        val etRate5Emp: EditText = dialog.findViewById(R.id.etRate5Emp)
+        val etRate6Emp: EditText = dialog.findViewById(R.id.etRate6Emp)
+        val etRate7Emp: EditText = dialog.findViewById(R.id.etRate7Emp)
+        val cbRateEmp: CheckBox = dialog.findViewById(R.id.cbRateEmp)
 
-        // Set initial values in the dialog
-        etHourlyRateEmp.setText(workRecord.hourlyRate.toString())
-        etDeductionsEmp.setText(workRecord.deductions.toString())
-        etWorkHoursEmp.setText(workRecord.totalWorkHours.toString())
+        cbRateEmp.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                etDeductionsEmp.isEnabled = false
+                etRate1Emp.isEnabled = true
+                etRate2Emp.isEnabled = true
+                etRate3Emp.isEnabled = true
+                etRate4Emp.isEnabled = true
+                etRate5Emp.isEnabled = true
+                etRate6Emp.isEnabled = true
+                etRate7Emp.isEnabled = true
+            } else {
+                etDeductionsEmp.isEnabled = true
+                etRate1Emp.isEnabled = false
+                etRate2Emp.isEnabled = false
+                etRate3Emp.isEnabled = false
+                etRate4Emp.isEnabled = false
+                etRate5Emp.isEnabled = false
+                etRate6Emp.isEnabled = false
+                etRate7Emp.isEnabled = false
+            }
+        }
+
+        if (cbRateEmp.isChecked) {
+            etDeductionsEmp.isEnabled = false
+            etRate1Emp.isEnabled = true
+            etRate2Emp.isEnabled = true
+            etRate3Emp.isEnabled = true
+            etRate4Emp.isEnabled = true
+            etRate5Emp.isEnabled = true
+            etRate6Emp.isEnabled = true
+            etRate7Emp.isEnabled = true
+        } else {
+            etDeductionsEmp.isEnabled = true
+            etRate1Emp.isEnabled = false
+            etRate2Emp.isEnabled = false
+            etRate3Emp.isEnabled = false
+            etRate4Emp.isEnabled = false
+            etRate5Emp.isEnabled = false
+            etRate6Emp.isEnabled = false
+            etRate7Emp.isEnabled = false
+        }
+
+        etHourlyRateEmp.setText(workRecord.hourlyRate.toString())//시급
+        etDeductionsEmp.setText(workRecord.deductions.toString())//공제
+        etWorkHoursEmp.setText(workRecord.totalWorkHours.toString())//총 근무시간
 
         btnSetSalaryEmp.setOnClickListener {
             val hourlyRateValue = etHourlyRateEmp.text.toString().toDoubleOrNull() ?: 0.0
-            val deductionsValue = etDeductionsEmp.text.toString().toDoubleOrNull() ?: 0.0
             val workHoursValue = etWorkHoursEmp.text.toString().toDoubleOrNull() ?: 0.0
 
+            val totalRate = (etRate1Emp.text.toString().toDoubleOrNull() ?: 0.0) +
+                    (etRate2Emp.text.toString().toDoubleOrNull() ?: 0.0) +
+                    (etRate3Emp.text.toString().toDoubleOrNull() ?: 0.0) +
+                    (etRate4Emp.text.toString().toDoubleOrNull() ?: 0.0) +
+                    (etRate5Emp.text.toString().toDoubleOrNull() ?: 0.0) +
+                    (etRate6Emp.text.toString().toDoubleOrNull() ?: 0.0) +
+                    (etRate7Emp.text.toString().toDoubleOrNull() ?: 0.0)
+
+            val deductionsValue = etDeductionsEmp.text.toString().toDoubleOrNull() ?: 0.0
+
             val totalSalary = hourlyRateValue * workHoursValue
-            val deductionsAmount = totalSalary * (deductionsValue / 100)
+            val endrate = if (cbRateEmp.isChecked) {
+                totalRate
+            } else {
+                deductionsValue
+            }
+            val deductionsAmount = totalSalary * (endrate / 100)
+
             val finalSalary = totalSalary - deductionsAmount
 
-            // Update the work record
             val updatedRecord = workRecord.copy(
-                hourlyRate = hourlyRateValue,
-                deductions = deductionsValue,
-                totalWorkHours = workHoursValue,
-                salaryAmount = finalSalary
+                hourlyRate = hourlyRateValue, // 시급
+                deductions = endrate, // 공제
+                totalWorkHours = workHoursValue, // 근무시간
+                salaryAmount = finalSalary // 급여
             )
 
             workRecordList = workRecordList.toMutableList().apply {
                 set(position, updatedRecord)
             }
 
-            // Notify the adapter of the change
             notifyItemChanged(position)
 
-            // 다이얼로그 닫기
             dialog.dismiss()
         }
 
-        // Set the dialog width to match the parent width
         dialog.window?.setLayout(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.WRAP_CONTENT
