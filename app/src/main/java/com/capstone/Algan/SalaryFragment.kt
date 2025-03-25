@@ -24,14 +24,13 @@ class SalaryFragment : Fragment() {
     private lateinit var hourlyRate: TextView
     private lateinit var deductions: TextView
     private lateinit var recyclerView: RecyclerView
-    private lateinit var tvrate1:TextView
-    private lateinit var tvrate2:TextView
-    private lateinit var tvrate3:TextView
-    private lateinit var tvrate4:TextView
-    private lateinit var tvrate5:TextView
-    private lateinit var tvrate6:TextView
-    private lateinit var tvrate7:TextView
-
+    private lateinit var tvrate1: TextView
+    private lateinit var tvrate2: TextView
+    private lateinit var tvrate3: TextView
+    private lateinit var tvrate4: TextView
+    private lateinit var tvrate5: TextView
+    private lateinit var tvrate6: TextView
+    private lateinit var tvrate7: TextView
 
 
     private val isBusinessOwner = true // 사업주 테스트
@@ -48,11 +47,13 @@ class SalaryFragment : Fragment() {
 
         val binding = FragmentSalaryBinding.inflate(inflater, container, false)
 
-        if(isBusinessOwner){
+        if (isBusinessOwner) {
             binding.LinOwner.visibility = View.VISIBLE
             binding.btnShowSalaryInputOwner.visibility = View.VISIBLE
-        } else{binding.LinOwner.visibility = View.GONE
-        binding.btnShowSalaryInputOwner.visibility = View.GONE}
+        } else {
+            binding.LinOwner.visibility = View.GONE
+            binding.btnShowSalaryInputOwner.visibility = View.GONE
+        }
 
         tvStartDate = binding.tvStartDate
         tvEndDate = binding.tvEndDate
@@ -144,8 +145,6 @@ class SalaryFragment : Fragment() {
     }
 
 
-
-
     private fun showSalaryInputOwnerDialog() {
         val dialog = Dialog(requireContext())
         dialog.setContentView(R.layout.dialog_salary_input_whole)
@@ -216,17 +215,32 @@ class SalaryFragment : Fragment() {
             val etRate5Value = etRate5.text.toString().toDoubleOrNull() ?: 0.0
             val etRate6Value = etRate6.text.toString().toDoubleOrNull() ?: 0.0
             val etRate7Value = etRate7.text.toString().toDoubleOrNull() ?: 0.0
+            val totalRate = (etRate1.text.toString().toDoubleOrNull() ?: 0.0) +
+                    (etRate2.text.toString().toDoubleOrNull() ?: 0.0) +
+                    (etRate3.text.toString().toDoubleOrNull() ?: 0.0) +
+                    (etRate4.text.toString().toDoubleOrNull() ?: 0.0) +
+                    (etRate5.text.toString().toDoubleOrNull() ?: 0.0) +
+                    (etRate6.text.toString().toDoubleOrNull() ?: 0.0) +
+                    (etRate7.text.toString().toDoubleOrNull() ?: 0.0)
+
+// totalRate에 총합이 저장됨
+
             // 급여 계산 후 화면에 표시
             worktime.text = "근무시간: 09:00 ~ 18:00" // 예시
             hourlyRate.text = "시급: ${hourlyRateValue}원"
-            deductions.text = "공제: ${deductionsValue}%"
-            tvrate1.text = "국민연금 : ${etRate1Value}"
-            tvrate2.text = "건강보험 : ${etRate2Value}"
-            tvrate3.text = "고용보험 : ${etRate3Value}"
-            tvrate4.text = "산재보험 : ${etRate4Value}"
-            tvrate5.text = "장기요양보험 : ${etRate5Value}"
-            tvrate6.text = "소득세 : ${etRate6Value}"
-            tvrate7.text = "기타 : ${etRate7Value}"
+
+            if (cbRate.isChecked) {
+                tvrate1.text = "국민연금 : ${etRate1Value}"
+                tvrate2.text = "건강보험 : ${etRate2Value}"
+                tvrate3.text = "고용보험 : ${etRate3Value}"
+                tvrate4.text = "산재보험 : ${etRate4Value}"
+                tvrate5.text = "장기요양보험 : ${etRate5Value}"
+                tvrate6.text = "소득세 : ${etRate6Value}"
+                tvrate7.text = "기타 : ${etRate7Value}"
+                deductions.text = "공제: ${totalRate}%"
+            } else {
+                deductions.text = "공제: ${deductionsValue}%"
+            }
             // 다이얼로그 닫기
             dialog.dismiss()
         }
@@ -239,7 +253,6 @@ class SalaryFragment : Fragment() {
 
         dialog.show()
     }
-
 
 
     private fun showSalaryInputDialog() {

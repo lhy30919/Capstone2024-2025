@@ -126,49 +126,49 @@
                             android:id="@+id/tvrate1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="국민연금"
+                            android:text="국민연금 : 0"
                             android:textSize="20dp" />
 
                         <TextView
                             android:id="@+id/tvrate2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="건강보험"
+                            android:text="건강보험 : 0"
                             android:textSize="20dp" />
 
                         <TextView
                             android:id="@+id/tvrate3"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="고용보험"
+                            android:text="고용보험 : 0"
                             android:textSize="20dp" />
 
                         <TextView
                             android:id="@+id/tvrate4"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="산재보험"
+                            android:text="산재보험 : 0"
                             android:textSize="20dp" />
 
                         <TextView
                             android:id="@+id/tvrate5"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="장기요양보험"
+                            android:text="장기요양보험 : 0"
                             android:textSize="20dp" />
 
                         <TextView
                             android:id="@+id/tvrate6"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="소득세"
+                            android:text="소득세 : 0"
                             android:textSize="20dp" />
 
                         <TextView
                             android:id="@+id/tvrate7"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="기타"
+                            android:text="기타 : 0"
                             android:textSize="20dp" />
 
                     </LinearLayout>
