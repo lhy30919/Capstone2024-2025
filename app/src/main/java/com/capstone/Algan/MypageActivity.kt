@@ -56,7 +56,11 @@ class MyPageActivity : AppCompatActivity() {
         logoutButton.setOnClickListener {
             logout()
         }
-
+        // 뒤로가기 버튼 클릭 리스너 추가
+        val backButton: ImageButton = findViewById(R.id.back_button)
+        backButton.setOnClickListener {
+            finish()
+        }
         editButton.setOnClickListener {
             toggleEditMode()
         }
