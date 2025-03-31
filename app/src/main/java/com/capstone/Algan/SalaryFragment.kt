@@ -2,6 +2,7 @@ package com.capstone.Algan
 
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.content.Context
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,6 +14,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.capstone.Algan.databinding.FragmentSalaryBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import java.util.Calendar
 
 class SalaryFragment : Fragment() {
@@ -35,7 +38,8 @@ class SalaryFragment : Fragment() {
     private lateinit var tvrate7: TextView
 
 
-    private val isBusinessOwner = false // 사업주 테스트
+   // private val isBusinessOwner = false // 사업주 테스트
+
     //private val isBusinessOwner = false // 근로자 테스트
 
     private lateinit var workerList: List<Worker> // 근로자 목록
@@ -45,16 +49,18 @@ class SalaryFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-
         val binding = FragmentSalaryBinding.inflate(inflater, container, false)
 
-        if (isBusinessOwner) {
-            binding.LinOwner.visibility = View.VISIBLE
-            binding.btnShowSalaryInputOwner.visibility = View.VISIBLE
-        } else {
-            binding.LinOwner.visibility = View.GONE
-            binding.btnShowSalaryInputOwner.visibility = View.GONE
+        isEmployee { isEmployee ->
+            activity?.runOnUiThread {
+                if (isEmployee) {
+                    binding.LinOwner.visibility = View.GONE
+                    binding.btnShowSalaryInputOwner.visibility = View.GONE
+                } else {
+                    binding.LinOwner.visibility = View.VISIBLE
+                    binding.btnShowSalaryInputOwner.visibility = View.VISIBLE
+                }
+            }
         }
 
         tvStartDate = binding.tvStartDate
@@ -73,6 +79,7 @@ class SalaryFragment : Fragment() {
         tvrate5 = binding.tvrate5
         tvrate6 = binding.tvrate6
         tvrate7 = binding.tvrate7
+
         // 날짜 선택을 위한 DatePickerDialog 표시
         fun showDatePicker(onDateSelected: (String) -> Unit) {
             val calendar = Calendar.getInstance()
@@ -80,16 +87,10 @@ class SalaryFragment : Fragment() {
             val month = calendar.get(Calendar.MONTH)
             val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-            val datePickerDialog =
-                DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
-                    val formattedDate = String.format(
-                        "%04d년 %02d월 %02d일",
-                        selectedYear,
-                        selectedMonth + 1,
-                        selectedDay
-                    )
-                    onDateSelected(formattedDate)
-                }, year, month, day)
+            val datePickerDialog = DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
+                val formattedDate = String.format("%04d년 %02d월 %02d일", selectedYear, selectedMonth + 1, selectedDay)
+                onDateSelected(formattedDate)
+            }, year, month, day)
 
             datePickerDialog.show()
         }
@@ -118,8 +119,7 @@ class SalaryFragment : Fragment() {
 
         // Spinner Adapter 설정
         val workerNames = workerList.map { it.name }
-        val adapter =
-            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, workerNames)
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, workerNames)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerWorker.adapter = adapter
 
@@ -132,21 +132,17 @@ class SalaryFragment : Fragment() {
         btnShowSalaryInput.setOnClickListener {
             showSalaryInputDialog()
         }
+
         // 사업주의 전체 급여 설정 리스너
         val btnShowSalaryInputOwner = binding.btnShowSalaryInputOwner
         btnShowSalaryInputOwner.setOnClickListener {
             showSalaryInputOwnerDialog()
         }
+
         // 근로자 선택 시 처리
         spinnerWorker.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parentView: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
+            override fun onItemSelected(parentView: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val selectedWorker = workerList[position]
-
                 // 선택된 근로자의 기록 갱신 (예시)
                 updateSalaryRecords(selectedWorker)
             }
@@ -158,8 +154,24 @@ class SalaryFragment : Fragment() {
 
         return binding.root
     }
+    private fun getCompanyCode(): String { //회사코드 가져오는 코드
+        val sharedPreferences = requireContext().getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("companyCode", "defaultCompanyCode") ?: "defaultCompanyCode"
+    }
+    private fun isEmployee(callback: (Boolean) -> Unit) { // 근로자인지 확인하는 코드
+        val companyCode = getCompanyCode() // 회사 코드 가져오기
+        val database = FirebaseDatabase.getInstance()
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return callback(false) // 로그인한 사용자 UID
 
+        val employeeRef = database.getReference("companies/$companyCode/employees/$userId")
 
+        employeeRef.get().addOnSuccessListener { snapshot ->
+            callback(snapshot.exists()) // employees/{userId}가 존재하면 true (근로자)
+        }.addOnFailureListener {
+            callback(false) // 실패 시 기본값 false (사업주로 간주)
+        }
+    }
+    
     // 완료 => 미완료 버튼 바꾸는 함수. 알람 로직 추가 필요.
     private fun updateButtonStatus(button: Button, isCompleted: Boolean) {
         if (!isAdded) return // 프래그먼트가 유효하지 않으면 리턴
