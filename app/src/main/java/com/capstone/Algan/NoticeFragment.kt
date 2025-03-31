@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -76,7 +77,8 @@ class NoticeFragment : Fragment() {
         val currentUser = FirebaseAuth.getInstance().currentUser?.displayName ?: "Unknown User"
 
         // RecyclerView 설정
-        chatAdapter = ChatAdapter(messageList, currentUser)
+        chatAdapter = ChatAdapter(messageList, currentUser, forceLeftGravity = true)
+
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = chatAdapter
 
@@ -140,6 +142,7 @@ class NoticeFragment : Fragment() {
 
                     saveMessageToFirebase(message)
                     messageList.add(message)
+
                     chatAdapter.notifyItemInserted(messageList.size - 1)
 
                     // 입력 필드 초기화

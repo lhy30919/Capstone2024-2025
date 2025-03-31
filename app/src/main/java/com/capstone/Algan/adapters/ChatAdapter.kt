@@ -16,7 +16,8 @@ import com.squareup.picasso.Picasso // 이미지 로딩 라이브러리
 
 class ChatAdapter(
     private val messageList: MutableList<Message>,
-    private val currentUser: String // 현재 로그인한 사용자 이름
+    private val currentUser: String, // 현재 로그인한 사용자 이름
+    private val forceLeftGravity: Boolean = false // 왼쪽 정렬 강제 플래그
 ) : RecyclerView.Adapter<ChatAdapter.MessageViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
@@ -39,21 +40,27 @@ class ChatAdapter(
             holder.btnProfile.setImageResource(R.drawable.baseline_person_2_24) // 기본 아이콘
         }
 
-        // 본인 메시지에만 삭제 버튼 표시
-        if (message.username == currentUser) {
-            holder.btnDelete.visibility = View.VISIBLE
-            holder.btnDelete.setOnClickListener {
-                if (messageList.size > position) { // 메시지가 리스트에 있을 경우만 삭제
-                    messageList.removeAt(position)
-                    notifyItemRemoved(position)
-                }
-            }
-            // 현재 로그인한 사용자가 작성한 메시지의 레이아웃을 오른쪽 정렬
-            holder.LinMessageitem.gravity = Gravity.END
-        } else {
-            holder.btnDelete.visibility = View.GONE
-            // 다른 사용자가 작성한 메시지의 레이아웃을 왼쪽 정렬
+        if (forceLeftGravity) {
+            // 왼쪽 정렬 강제
             holder.LinMessageitem.gravity = Gravity.START
+            holder.btnDelete.visibility = View.GONE
+        } else {
+            // 본인 메시지에만 삭제 버튼 표시
+            if (message.username == currentUser) {
+                holder.btnDelete.visibility = View.VISIBLE
+                holder.btnDelete.setOnClickListener {
+                    if (messageList.size > position) { // 메시지가 리스트에 있을 경우만 삭제
+                        messageList.removeAt(position)
+                        notifyItemRemoved(position)
+                    }
+                }
+                // 현재 로그인한 사용자가 작성한 메시지의 레이아웃을 오른쪽 정렬
+                holder.LinMessageitem.gravity = Gravity.END
+            } else {
+                holder.btnDelete.visibility = View.GONE
+                // 다른 사용자가 작성한 메시지의 레이아웃을 왼쪽 정렬
+                holder.LinMessageitem.gravity = Gravity.START
+            }
         }
 
         // 메시지에 이미지가 있을 경우 표시

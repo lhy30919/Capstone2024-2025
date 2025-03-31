@@ -61,8 +61,7 @@ class DaeTaFragment : Fragment() {
                 // 각 텍스트 뷰에 데이터 설정
                 itemView.findViewById<TextView>(R.id.textViewSubstituteDate).text = datePart
                 itemView.findViewById<TextView>(R.id.textViewSubstituteTime).text = timePart
-                itemView.findViewById<TextView>(R.id.textViewRequesterName).text =
-                    request.requesterName
+                itemView.findViewById<TextView>(R.id.textViewRequesterName).text = request.requesterName
 
                 // 수락자 이름 설정
                 val acceptedBy = request.acceptedBy
@@ -76,8 +75,6 @@ class DaeTaFragment : Fragment() {
                 acceptButton.backgroundTintList =
                     ContextCompat.getColorStateList(context, android.R.color.holo_green_light)
 
-                // 승인 버튼 상태 설정ㅅㄷ
-
 // 근로자만 하단 전체대타, 나의대타요청, 수락내역, 대타 생성 버튼 보이게
                 isEmployee { isEmployee ->
                     acceptButton.isEnabled = isEmployee // 근로자만 승인 버튼 활성화
@@ -85,11 +82,11 @@ class DaeTaFragment : Fragment() {
                     LinownerDaeta.visibility = if (isEmployee) View.VISIBLE else View.GONE
                 }
 
+                // 사업주만 승인 버튼을 누를 수 있도록 설정
 
 
                 // 버튼 클릭 리스너 설정
                 acceptButton.setOnClickListener { handleAcceptRequest(position) }
-
 
                 return itemView
             }
@@ -119,8 +116,7 @@ class DaeTaFragment : Fragment() {
         }
 
         // "모든 대타 요청 보기" 버튼 클릭 리스너
-        val buttonAllSubstituteRequests =
-            view.findViewById<Button>(R.id.buttonAllSubstituteRequests)
+        val buttonAllSubstituteRequests = view.findViewById<Button>(R.id.buttonAllSubstituteRequests)
         buttonAllSubstituteRequests.setOnClickListener {
             filterSubstituteRequests("ALL") // 모든 요청 및 수락 정보 포함
             updateRequestsView(noRequestsTextView, listView)
@@ -128,6 +124,7 @@ class DaeTaFragment : Fragment() {
 
         return view
     }
+
 
 
     private fun updateRequestsView(noRequestsTextView: TextView, listView: ListView) {
@@ -141,44 +138,28 @@ class DaeTaFragment : Fragment() {
     }
 
     private fun getRequesterName(): String {
-        val sharedPreferences =
-            requireContext().getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
+        val sharedPreferences = requireContext().getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
         return sharedPreferences.getString("username", "미확인된 사용자") ?: "미확인된 사용자"
     }
 
     private fun getCompanyCode(): String {
-        val sharedPreferences =
-            requireContext().getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
-        return sharedPreferences.getString("companyCode", "defaultCompanyCode")
-            ?: "defaultCompanyCode"
+        val sharedPreferences = requireContext().getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("companyCode", "defaultCompanyCode") ?: "defaultCompanyCode"
     }
 
-    private fun isEmployee(callback: (Boolean) -> Unit) {
-        val companyCode = getCompanyCode() // 회사 코드 가져오기
-        val database = FirebaseDatabase.getInstance()
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return callback(false) // 로그인한 사용자 UID
-
-        val employeeRef = database.getReference("companies/$companyCode/employees/$userId")
-
-        employeeRef.get().addOnSuccessListener { snapshot ->
-            callback(snapshot.exists()) // employees/{userId}가 존재하면 true (근로자)
-        }.addOnFailureListener {
-            callback(false) // 실패 시 기본값 false (사업주로 간주)
-        }
+    private fun isBusinessOwner(): Boolean {
+        val sharedPreferences = requireContext().getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
+        val role = sharedPreferences.getString("userRole", "employee") // 예: "employee", "businessOwner"
+        return role == "businessOwner" // 사업주인 경우 true, 아니면 false
     }
-
 
     private fun showDatePicker() {
-        val datePicker =
-            com.google.android.material.datepicker.MaterialDatePicker.Builder.datePicker()
-                .setTitleText("대타를 신청할 날짜를 선택하세요")
-                .build()
+        val datePicker = com.google.android.material.datepicker.MaterialDatePicker.Builder.datePicker()
+            .setTitleText("대타를 신청할 날짜를 선택하세요")
+            .build()
 
         datePicker.addOnPositiveButtonClickListener { selection ->
-            val selectedDate = SimpleDateFormat(
-                "yyyy-MM-dd",
-                Locale.getDefault()
-            ).format(java.util.Date(selection))
+            val selectedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(java.util.Date(selection))
             showTimeRangePicker(selectedDate)
         }
 
@@ -221,8 +202,7 @@ class DaeTaFragment : Fragment() {
                 val endHour = endHourPicker.value
                 val endMinute = endMinutePicker.value
 
-                val startTime =
-                    String.format(Locale.getDefault(), "%02d:%02d", startHour, startMinute)
+                val startTime = String.format(Locale.getDefault(), "%02d:%02d", startHour, startMinute)
                 val endTime = String.format(Locale.getDefault(), "%02d:%02d", endHour, endMinute)
 
                 val timeRange = "$selectedDate $startTime ~ $endTime"
@@ -255,6 +235,7 @@ class DaeTaFragment : Fragment() {
     }
 
 
+
     private fun loadAllSubstituteRequests() {
         val companyCode = getCompanyCode()
         val database = FirebaseDatabase.getInstance()
@@ -284,23 +265,21 @@ class DaeTaFragment : Fragment() {
     }
 
 
+
     private fun filterSubstituteRequests(mode: String) {
         filteredSubstituteList = when (mode) {
             "REQUEST" -> {
                 // 내가 요청한 대타 요청만 필터링
                 substituteList.filter { it.requesterName == getRequesterName() }.toMutableList()
             }
-
             "ACCEPTED" -> {
                 // 내가 수락한 대타 요청만 필터링
                 substituteList.filter { it.acceptedBy == getRequesterName() }.toMutableList()
             }
-
             "ALL" -> {
                 // 모든 대타 요청 및 수락 정보 포함
                 substituteList.toMutableList()
             }
-
             else -> mutableListOf() // 기본값
         }
 
@@ -310,42 +289,34 @@ class DaeTaFragment : Fragment() {
         adapter.notifyDataSetChanged()
     }
 
-
     private fun handleAcceptRequest(position: Int) {
-        // 수락 요청 처리 코드 (기존 코드 유지)
         val requesterName = getRequesterName()
         val currentRequest = filteredSubstituteList[position]
 
-        if (currentRequest.acceptedBy == null) {
-            currentRequest.acceptedBy = requesterName // 수락자 설정
-        }
-
+        // 수락자 설정
+        currentRequest.acceptedBy = requesterName
         currentRequest.isApproved = false // 승인 대기 상태로 변경
 
-        // Firebase에서 해당 요청을 찾아 업데이트
+        // Firebase에서 해당 요청을 업데이트
         val database = FirebaseDatabase.getInstance()
         val requestsRef = database.getReference("substituteRequests/${getCompanyCode()}")
 
+        // 해당 요청을 Firebase에 업데이트
         requestsRef.orderByChild("timeRange").equalTo(currentRequest.timeRange)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     // Fragment가 여전히 연결되어 있는지 확인
                     if (!isAdded) return
 
-                    // 기존 요청을 substituteList에서 업데이트
-                    substituteList.clear()
+                    // 기존 요청을 Firebase에서 업데이트
                     for (requestSnapshot in snapshot.children) {
-                        val request = requestSnapshot.getValue(SubstituteRequest::class.java)
-                        if (request != null) {
-                            substituteList.add(request) // 모든 대타 요청 추가
-                        }
+                        // Firebase에 요청 업데이트
+                        requestSnapshot.ref.child("acceptedBy").setValue(requesterName)
+                        requestSnapshot.ref.child("isApproved").setValue(false) // 승인 대기 상태로 변경
                     }
 
-                    // 최신 요청이 위로 가도록 정렬
-                    substituteList.sortByDescending { it.timeRange }
-
-                    // 모든 요청을 보여줌
-                    filterSubstituteRequests("ALL") // 모든 요청 및 수락 정보 포함
+                    // 요청 업데이트 후 다시 불러오기
+                    loadAllSubstituteRequests() // 모든 요청 다시 불러오기
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -356,5 +327,19 @@ class DaeTaFragment : Fragment() {
         adapter.notifyDataSetChanged() // UI 갱신
     }
 
+
+    private fun isEmployee(callback: (Boolean) -> Unit) {
+        val companyCode = getCompanyCode() // 회사 코드 가져오기
+        val database = FirebaseDatabase.getInstance()
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return callback(false) // 로그인한 사용자 UID
+
+        val employeeRef = database.getReference("companies/$companyCode/employees/$userId")
+
+        employeeRef.get().addOnSuccessListener { snapshot ->
+            callback(snapshot.exists()) // employees/{userId}가 존재하면 true (근로자)
+        }.addOnFailureListener {
+            callback(false) // 실패 시 기본값 false (사업주로 간주)
+        }
+    }
 
 }
