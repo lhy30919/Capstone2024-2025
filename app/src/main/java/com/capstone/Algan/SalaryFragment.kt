@@ -497,7 +497,7 @@ class SalaryRecordAdapter(
             etRate5Emp.isEnabled = false
             etRate6Emp.isEnabled = false
             etRate7Emp.isEnabled = false
-        } d
+        }
 
         etHourlyRateEmp.setText(workRecord.hourlyRate.toString())//시급
         etDeductionsEmp.setText(workRecord.deductions.toString())//공제
