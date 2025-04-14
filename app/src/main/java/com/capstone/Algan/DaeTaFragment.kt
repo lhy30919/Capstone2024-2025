@@ -1,6 +1,8 @@
 package com.capstone.Algan
 
+import android.app.DatePickerDialog
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +21,8 @@ import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Calendar.*
 import java.util.Locale
 
 class DaeTaFragment : Fragment() {
@@ -82,7 +86,7 @@ class DaeTaFragment : Fragment() {
                     LinownerDaeta.visibility = if (isEmployee) View.VISIBLE else View.GONE
                 }
 
-                // 사업주만 승인 버튼을 누를 수 있도록 설정
+
 
 
                 // 버튼 클릭 리스너 설정
@@ -153,23 +157,45 @@ class DaeTaFragment : Fragment() {
         return role == "businessOwner" // 사업주인 경우 true, 아니면 false
     }
 
-    private fun showDatePicker() {
-        val datePicker = com.google.android.material.datepicker.MaterialDatePicker.Builder.datePicker()
-            .setTitleText("대타를 신청할 날짜를 선택하세요")
-            .build()
+    private fun showDatePicker() { // 달력
+        val calendar = getInstance()
+        val year = calendar.get(YEAR)
+        val month = calendar.get(MONTH)
+        val day = calendar.get(DAY_OF_MONTH)
 
-        datePicker.addOnPositiveButtonClickListener { selection ->
-            val selectedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(java.util.Date(selection))
-            showTimeRangePicker(selectedDate)
+        val datePickerDialog = DatePickerDialog(
+            requireContext(),
+            { _, selectedYear, selectedMonth, selectedDayOfMonth ->
+                val formattedDate = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDayOfMonth)
+                showTimeRangePicker(formattedDate)
+            },
+            year, month, day
+        )
+
+        datePickerDialog.setTitle("대타를 신청할 날짜를 선택하세요")
+        datePickerDialog.setOnShowListener {
+            val titleId = requireContext().resources.getIdentifier("alertTitle", "id", "android")
+            val titleView = datePickerDialog.findViewById<TextView>(titleId)
+
+            // 타이틀 텍스트 색상 설정
+            titleView?.setTextColor(Color.WHITE)
+
+            // 타이틀 배경색 지정
+            titleView?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.colorAccent))
+
+            // 타이틀의 부모 뷰에도 배경 적용 (전체 영역 적용)
+            val parent = titleView?.parent as? View
+            parent?.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.colorAccent))
         }
 
-        datePicker.show(childFragmentManager, "DATE_PICKER")
+        datePickerDialog.show()
     }
 
+
     private fun showTimeRangePicker(selectedDate: String) {
-        val currentTime = java.util.Calendar.getInstance()
-        val hour = currentTime.get(java.util.Calendar.HOUR_OF_DAY)
-        val minute = currentTime.get(java.util.Calendar.MINUTE)
+        val currentTime = getInstance()
+        val hour = currentTime.get(HOUR_OF_DAY)
+        val minute = currentTime.get(MINUTE)
 
         val timePickerView = layoutInflater.inflate(R.layout.dialog_time_picker, null)
 
