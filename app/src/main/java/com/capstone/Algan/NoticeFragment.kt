@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -29,7 +30,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class NoticeFragment : Fragment() {
-
+    private lateinit var LinChat: LinearLayout
     private lateinit var recyclerView: RecyclerView
     private lateinit var editTextMessage: EditText
     private lateinit var buttonSend: Button
@@ -106,6 +107,12 @@ class NoticeFragment : Fragment() {
                         companyCode = companySnapshot.key.toString()
                         userRole = "근로자" // 역할 설정
                         loadMessages() // 메시지 로드
+
+                        // 근로자는 채팅 안보이게
+                        view?.findViewById<LinearLayout>(R.id.LinChat)?.visibility = View.GONE
+                        editTextMessage.isClickable = false
+                        editTextMessage.isFocusable = false
+
                         companyFound = true
                         break
                     }
@@ -120,11 +127,14 @@ class NoticeFragment : Fragment() {
                 Log.e("Firebase", "Error retrieving user role: ${error.message}")
             }
         })
-
         // 메시지 보내기 버튼 클릭 처리
         buttonSend.setOnClickListener {
             if (!::userRole.isInitialized) {
-                Toast.makeText(requireContext(), "사용자 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "사용자 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.",
+                    Toast.LENGTH_SHORT
+                ).show()
                 return@setOnClickListener
             }
 
@@ -171,10 +181,10 @@ class NoticeFragment : Fragment() {
     }
 
 
-
     private fun saveMessageToFirebase(message: Message) {
-        val messageId = FirebaseDatabase.getInstance().reference.child("companies").child(companyCode)
-            .child("messages").push().key
+        val messageId =
+            FirebaseDatabase.getInstance().reference.child("companies").child(companyCode)
+                .child("messages").push().key
         if (messageId != null) {
             FirebaseDatabase.getInstance().reference.child("companies").child(companyCode)
                 .child("messages").child(messageId).setValue(message)
