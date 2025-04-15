@@ -64,10 +64,16 @@ class ChatAdapter(
         }
 
         // 메시지에 이미지가 있을 경우 표시
-        if (!message.imageUri.isNullOrEmpty()) {
-            holder.imageViewMessageImage.visibility = View.VISIBLE
+        if (!message.imageUri.isNullOrEmpty()) {//이미지가 비었지않으면= 있으면
+            holder.imageViewMessageImage.visibility = View.VISIBLE//이미지 뷰 보이게
+            if (message.content.isNullOrEmpty()) {//글이없으면
+                holder.tvMessageContent.visibility = View.GONE//글 뷰 안 보이게
+            } else {
+                holder.tvMessageContent.visibility = View.VISIBLE
+            }
             Picasso.get().load(Uri.parse(message.imageUri)).into(holder.imageViewMessageImage)
         } else {
+            holder.tvMessageContent.visibility = View.VISIBLE
             holder.imageViewMessageImage.visibility = View.GONE
         }
     }
@@ -90,7 +96,9 @@ class ChatAdapter(
         val tvUsername: TextView = itemView.findViewById(R.id.tvUsername)
         val btnProfile: ImageView = itemView.findViewById(R.id.btnProfile)
         val btnDelete: Button = itemView.findViewById(R.id.btnDelete)
-        val imageViewMessageImage: ImageView = itemView.findViewById(R.id.imageViewMessageImage) // 이미지 뷰 추가
-        val LinMessageitem: LinearLayout = itemView.findViewById(R.id.LinMessageitem) // LinearLayout 참조 추가
+        val imageViewMessageImage: ImageView =
+            itemView.findViewById(R.id.imageViewMessageImage) // 이미지 뷰 추가
+        val LinMessageitem: LinearLayout =
+            itemView.findViewById(R.id.LinMessageitem) // LinearLayout 참조 추가
     }
 }

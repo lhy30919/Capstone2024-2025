@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -42,6 +43,24 @@ class CommunicationFragment : Fragment() {
     private lateinit var userRole: String
     private lateinit var companyCode: String
     private lateinit var sharedPreferences: SharedPreferences
+    // 요청 코드 상수 정의
+    private val GALLERY_REQUEST_CODE = 100
+    private val CAMERA_REQUEST_CODE = 101
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            val isGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                permissions[Manifest.permission.READ_MEDIA_IMAGES] ?: false
+            } else {
+                permissions[Manifest.permission.READ_EXTERNAL_STORAGE] ?: false
+            }
+
+            if (isGranted) {
+                showImagePickerDialog()
+            } else {
+                Toast.makeText(requireContext(), "권한이 거부되었습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -135,6 +154,24 @@ class CommunicationFragment : Fragment() {
                 Toast.makeText(requireContext(), "메시지를 입력해주세요.", Toast.LENGTH_SHORT).show()
             }
         }
+        // 사진 첨부 버튼 클릭 처리
+        buttonAttach.setOnClickListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val permission = Manifest.permission.READ_MEDIA_IMAGES
+                if (requireContext().checkSelfPermission(permission) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                    showImagePickerDialog()
+                } else {
+                    requestPermissionLauncher.launch(arrayOf(permission))
+                }
+            } else {
+                val permission = Manifest.permission.READ_EXTERNAL_STORAGE
+                if (requireContext().checkSelfPermission(permission) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                    showImagePickerDialog()
+                } else {
+                    requestPermissionLauncher.launch(arrayOf(permission))
+                }
+            }
+        }
 
         return view
     }
@@ -181,8 +218,73 @@ class CommunicationFragment : Fragment() {
         return formatter.format(Date())
     }
 
+    private fun openGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        intent.type = "image/*"
+        startActivityForResult(intent, GALLERY_REQUEST_CODE)
+    }
+
+    private fun openCamera() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivityForResult(intent, CAMERA_REQUEST_CODE)
+    }
+
+    private fun showImagePickerDialog() {
+        val options = arrayOf("갤러리에서 선택", "카메라로 사진 찍기")
+        android.app.AlertDialog.Builder(requireContext())
+            .setTitle("사진 선택 방법")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> openGallery()
+                    1 -> openCamera()
+                }
+            }
+            .show()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                GALLERY_REQUEST_CODE -> {
+                    data?.data?.let { uri ->
+                        selectedImageUri = uri
+                        imageViewPreview.visibility = View.VISIBLE
+                        imageViewPreview.setImageURI(selectedImageUri)
+                    }
+                }
+
+                CAMERA_REQUEST_CODE -> {
+                    data?.extras?.get("data")?.let { image ->
+                        val tempUri = getImageUri(image)
+                        if (tempUri != Uri.EMPTY) {
+                            selectedImageUri = tempUri
+                            imageViewPreview.visibility = View.VISIBLE
+                            imageViewPreview.setImageURI(selectedImageUri)
+                        } else {
+                            Toast.makeText(requireContext(), "사진 URI 생성 실패", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    }
+                }
+            }
+        }
+    }
     // 프로필 이미지 URL 가져오기
     private fun getProfileImageUrl(): String {
         return FirebaseAuth.getInstance().currentUser?.photoUrl?.toString() ?: "기본 이미지 URL"
+    }
+    private fun getImageUri(image: Any): Uri {
+        val imageBitmap = image as Bitmap
+        val path = MediaStore.Images.Media.insertImage(
+            requireContext().contentResolver, imageBitmap, "Captured Image", null
+        )
+
+        return if (path != null) {
+            Uri.parse(path)
+        } else {
+            Uri.EMPTY
+        }
     }
 }
