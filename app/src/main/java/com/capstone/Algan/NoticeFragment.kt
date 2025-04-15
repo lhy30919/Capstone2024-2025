@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -49,17 +50,19 @@ class NoticeFragment : Fragment() {
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            val writePermissionGranted =
-                permissions[Manifest.permission.WRITE_EXTERNAL_STORAGE] ?: false
-            val readPermissionGranted =
+            val isGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                permissions[Manifest.permission.READ_MEDIA_IMAGES] ?: false
+            } else {
                 permissions[Manifest.permission.READ_EXTERNAL_STORAGE] ?: false
+            }
 
-            if (writePermissionGranted && readPermissionGranted) {
+            if (isGranted) {
                 showImagePickerDialog()
             } else {
                 Toast.makeText(requireContext(), "권한이 거부되었습니다.", Toast.LENGTH_SHORT).show()
             }
         }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -169,17 +172,25 @@ class NoticeFragment : Fragment() {
 
         // 사진 첨부 버튼 클릭 처리
         buttonAttach.setOnClickListener {
-            requestPermissionLauncher.launch(
-                arrayOf(
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                )
-            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val permission = Manifest.permission.READ_MEDIA_IMAGES
+                if (requireContext().checkSelfPermission(permission) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                    showImagePickerDialog()
+                } else {
+                    requestPermissionLauncher.launch(arrayOf(permission))
+                }
+            } else {
+                val permission = Manifest.permission.READ_EXTERNAL_STORAGE
+                if (requireContext().checkSelfPermission(permission) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                    showImagePickerDialog()
+                } else {
+                    requestPermissionLauncher.launch(arrayOf(permission))
+                }
+            }
         }
 
         return view
     }
-
 
     private fun saveMessageToFirebase(message: Message) {
         val messageId =
