@@ -5,6 +5,16 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
+    <!-- Bluetooth Low Energy 권한 (Android 6.0 이상에서 필요) -->
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"/>
+    <!-- Android 10 이상 -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
@@ -28,31 +38,42 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Algan"
         tools:targetApi="33">
+
         <!-- SignUpActivity -->
-        <activity android:name=".SignUpActivity"
+        <activity
+            android:name=".SignUpActivity"
             android:exported="true" />
 
         <!-- MyPageActivity -->
         <activity
             android:name=".MyPageActivity"
             android:exported="true" />
+
         <!-- SplashActivity -->
         <activity
             android:name=".SplashActivity"
-            android:theme="@style/Theme.Algan"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.Algan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <!-- LoginActivity -->
         <activity
             android:name=".LoginActivity"
             android:theme="@style/Theme.Algan" />
-        <!-- MainActivity -->
-        <activity android:name=".MainActivity"
-            android:exported="true"/>
-    </application>
 
+        <!-- MainActivity -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true" />
+
+        <!-- BeaconService -->
+        <service
+            android:name=".BeaconService"
+            android:enabled="true"
+            android:exported="false" />
+    </application>
 </manifest>

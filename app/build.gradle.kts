@@ -40,6 +40,7 @@ android {
 }
 
 dependencies {
+    implementation("org.altbeacon:android-beacon-library:2.19.5") //비콘
 
     implementation("com.google.firebase:firebase-auth")
 

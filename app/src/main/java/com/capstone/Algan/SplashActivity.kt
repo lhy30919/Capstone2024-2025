@@ -1,11 +1,9 @@
 package com.capstone.Algan
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.view.WindowInsets
-import android.window.SplashScreen
 import androidx.appcompat.app.AppCompatActivity
 
 class SplashActivity : AppCompatActivity() {
@@ -22,9 +20,13 @@ class SplashActivity : AppCompatActivity() {
 
         // 2초 후에 LoginActivity 넘어가기
         Handler().postDelayed({
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()  // 현재 스플래시 화면을 종료
+            // BeaconService 시작
+            val intent = Intent(this, BeaconService::class.java)
+            startService(intent)
+
+            // 다음 화면으로 이동
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
         }, 2000)  // 2000ms (2초)
     }
 }

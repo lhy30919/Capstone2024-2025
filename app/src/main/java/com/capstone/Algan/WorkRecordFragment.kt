@@ -11,13 +11,15 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.capstone.Algan.utils.BeaconState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import java.text.SimpleDateFormat
 import java.util.*
+import org.altbeacon.beacon.* // 비콘
 
 class WorkRecordFragment : Fragment() {
-
+    private lateinit var beaconManager: BeaconManager// 비콘
     // UI 요소 선언
     private lateinit var btnClockInOut: Button
     private lateinit var tvClockIn: TextView
@@ -66,6 +68,18 @@ class WorkRecordFragment : Fragment() {
         initView(view)
         setupRecyclerView()
         fetchUserData() // 사용자 데이터 가져오기
+        // 비콘 연결 상태 관찰
+        BeaconState.isConnected.observe(viewLifecycleOwner, androidx.lifecycle.Observer { isConnected ->
+            if (isConnected) {
+                handleClockInOut()
+                Toast.makeText(requireContext(), "비콘 연결됨.", Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                // 비콘 연결 해제됨
+                Toast.makeText(requireContext(), "비콘 연결 안됨.", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        })
 
         btnClockInOut.setOnClickListener {
 
@@ -76,9 +90,9 @@ class WorkRecordFragment : Fragment() {
 
             handleClockInOut() // handleClockInOut 메서드 수정 필요
         }
-
         return view
     }
+
 
     // UI 요소 초기화
     private fun initView(view: View) {
@@ -207,7 +221,6 @@ class WorkRecordFragment : Fragment() {
             fetchRecords()
         }
     }
-
     // 역할에 따른 UI 변경
     private fun setupUIForRole() {
         if (isEmployer) {
@@ -253,7 +266,6 @@ class WorkRecordFragment : Fragment() {
             }
         }
     }
-
     // 날짜 선택 다이얼로그 함수 추가
     private fun showDatePicker(onDateSelected: (String) -> Unit) {
         val calendar = Calendar.getInstance()
@@ -307,6 +319,7 @@ class WorkRecordFragment : Fragment() {
                 ContextCompat.getColorStateList(requireContext(), android.R.color.holo_red_light)
             isClockedIn = true
         }
+
     }
 
     // 출퇴근 기록 저장
@@ -318,7 +331,7 @@ class WorkRecordFragment : Fragment() {
             clockIn = openTime,
             clockOut = closeTime,
             workedHours = calculateWorkedHours(openTime, closeTime),
-            hourlyRate = hourlyRate ?: "10000",
+            //hourlyRate = hourlyRate ?: "10000",
             userName = username ?: "알 수 없는 사용자"
         )
 
@@ -380,7 +393,6 @@ class WorkRecordFragment : Fragment() {
                 }
             })
     }
-
     // 현재 시간 가져오기
     private fun getCurrentTime(): String {
         val currentTimeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
@@ -389,8 +401,6 @@ class WorkRecordFragment : Fragment() {
         Log.d("WorkRecordFragment", "Current Time: $currentTime")
         return currentTime
     }
-
-
     // 근무 시간 계산
     private fun calculateWorkedHours(clockIn: String, clockOut: String): String {
         return try {
