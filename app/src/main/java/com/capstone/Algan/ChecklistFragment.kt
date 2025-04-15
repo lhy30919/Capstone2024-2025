@@ -204,6 +204,7 @@ class ChecklistFragment : Fragment() {
     private fun setupEmployeeUI() {
         binding.tvselectEmployees.visibility = View.GONE
         binding.spinnerEmployees.visibility = View.GONE
+        binding.spinnerEmployees.isEnabled=false
         binding.textViewItemContent.visibility = View.GONE
         binding.editTextItemContent.visibility = View.GONE
         binding.buttonAddItem.visibility = View.GONE
