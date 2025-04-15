@@ -3,16 +3,14 @@ package com.capstone.Algan
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.capstone.Algan.utils.UserData
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
 
 class MyPageActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
-    private lateinit var database: FirebaseDatabase
 
     private lateinit var usernameTextView: TextView
     private lateinit var emailTextView: TextView
@@ -20,7 +18,7 @@ class MyPageActivity : AppCompatActivity() {
     private lateinit var companyNameTextView: TextView
     private lateinit var companyCodeTextView: TextView
     private lateinit var userRoleTextView: TextView
-    private lateinit var timeSalaryTextView : TextView
+    private lateinit var timeSalaryTextView: TextView
     private lateinit var logoutButton: Button
     private lateinit var editButton: Button
 
@@ -35,7 +33,6 @@ class MyPageActivity : AppCompatActivity() {
 
         // Firebase 초기화
         auth = FirebaseAuth.getInstance()
-        database = FirebaseDatabase.getInstance()
 
         // UI 요소 초기화
         userRoleTextView = findViewById(R.id.userrollTextView)
@@ -56,11 +53,13 @@ class MyPageActivity : AppCompatActivity() {
         logoutButton.setOnClickListener {
             logout()
         }
-        // 뒤로가기 버튼 클릭 리스너 추가
+
+        // 뒤로가기 버튼 리스너 추가
         val backButton: ImageButton = findViewById(R.id.back_button)
         backButton.setOnClickListener {
             finish()
         }
+
         editButton.setOnClickListener {
             toggleEditMode()
         }
@@ -75,72 +74,45 @@ class MyPageActivity : AppCompatActivity() {
             return
         }
 
-        val companiesRef = database.getReference("companies")
-        companiesRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                var userCompanyCode: String? = null
-                var userSnapshot: DataSnapshot? = null
-                var role: String? = null
+        // `UserData`를 활용하여 사용자 데이터 및 회사 정보 로드
+        UserData.loadUserCompanyCode(this, userId) { companyCode ->
+            if (companyCode == null) {
+                Toast.makeText(this, "회사 코드를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+                return@loadUserCompanyCode
+            }
 
-                for (companySnapshot in snapshot.children) {
-                    val ownerSnapshot = companySnapshot.child("owner")
-                    if (ownerSnapshot.child("uid").getValue(String::class.java) == userId) {
-                        userCompanyCode = ownerSnapshot.child("companyCode").getValue(String::class.java)
-                        userSnapshot = ownerSnapshot
-                        role = "사업주"
-                        timeSalaryTextView.visibility = View.GONE
-                        break
+            // 각 필드를 개별적으로 로드
+            UserData.getUserName(companyCode, userId) { username ->
+                usernameTextView.text = "이름: ${username ?: "알 수 없음"}"
+            }
+            UserData.getUserEmail(companyCode, userId) { email ->
+                emailTextView.text = "이메일: ${email ?: "알 수 없음"}"
+            }
+
+            UserData.getUserPhone(companyCode, userId) { phone ->
+                phoneTextView.text = "전화번호: ${phone ?: "알 수 없음"}"
+            }
+
+            UserData.getUserRole(companyCode, userId) { role ->
+                userRoleTextView.text = role ?: "알 수 없음"
+
+                // 근로자일 경우 시급 표시
+                if (role == "근로자") {
+                    UserData.getUserSalary(companyCode, userId) { salary ->
+                        timeSalaryTextView.text = "시급: ${salary ?: "알 수 없음"}"
+                        timeSalaryTextView.visibility = View.VISIBLE
                     }
-
-                    val employeesSnapshot = companySnapshot.child("employees")
-                    for (employeeSnapshot in employeesSnapshot.children) {
-                        if (employeeSnapshot.child("uid").getValue(String::class.java) == userId) {
-                            userCompanyCode = employeeSnapshot.child("companyCode").getValue(String::class.java)
-                            userSnapshot = employeeSnapshot
-                            role = "근로자"
-                            timeSalaryTextView.visibility = View.VISIBLE
-                            break
-                        }
-                    }
-                }
-
-                if (userSnapshot != null && role != null) {
-                    loadUserInfo(userSnapshot, role, userCompanyCode, snapshot)
                 } else {
-                    Toast.makeText(this@MyPageActivity, "사용자 정보를 찾을 수 없습니다.", Toast.LENGTH_LONG).show()
+                    timeSalaryTextView.visibility = View.GONE
                 }
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@MyPageActivity, "데이터를 불러오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
+            UserData.getCompanyName(companyCode) { companyName ->
+                companyNameTextView.text = "회사 이름: ${companyName ?: "알 수 없음"}"
             }
-        })
-    }
 
-    private fun loadUserInfo(userSnapshot: DataSnapshot, role: String, userCompanyCode: String?, snapshot: DataSnapshot) {
-        val username = userSnapshot.child("username").getValue(String::class.java) ?: "알 수 없음"
-        val email = userSnapshot.child("email").getValue(String::class.java) ?: "알 수 없음"
-        val phone = userSnapshot.child("phone").getValue(String::class.java) ?: "알 수 없음"
-        val companyCode = userCompanyCode ?: "알 수 없음"
-        var companyName = "알 수 없음"
-        var timeSalary = userSnapshot.child("salary").getValue(String::class.java)?:"알 수 없음" // 시급
-
-
-        for (companySnapshot in snapshot.children) {
-            val ownerSnapshot = companySnapshot.child("owner")
-            if (ownerSnapshot.child("companyCode").getValue(String::class.java) == companyCode) {
-                companyName = ownerSnapshot.child("companyName").getValue(String::class.java) ?: "알 수 없음"
-                break
-            }
+            companyCodeTextView.text = "회사 코드: $companyCode"
         }
-
-        usernameTextView.text = "이름: $username"
-        emailTextView.text = "이메일: $email"
-        phoneTextView.text = "전화번호: $phone"
-        userRoleTextView.text = "$role"
-        companyNameTextView.text = "회사 이름: $companyName"
-        companyCodeTextView.text = "회사 코드: $companyCode"
-        timeSalaryTextView.text = "시급 : $timeSalary"
     }
 
     private fun toggleEditMode() {
@@ -182,32 +154,17 @@ class MyPageActivity : AppCompatActivity() {
 
         val sharedPreferences = getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
         val userId = sharedPreferences.getString("userId", null) ?: return
-        val role = userRoleTextView.text.toString().replace("역할: ", "")
         val companyCode = companyCodeTextView.text.toString().replace("회사 코드: ", "")
-
-        // 🔹 Firebase 경로: companies/{회사코드}/owner OR employees/{userId}
-        val rolePath = if (role == "사업주") "owner" else "employees"
-        // 🔹 Firebase 경로 설정: 사업주일 때는 owner 아래에, 근로자일 때는 employees/{userId} 아래에 저장
-        val userRef = if (role == "사업주") {
-            // 사업주일 경우: owner 아래 바로 저장
-            database.getReference("companies")
-                .child(companyCode)
-                .child("owner") // 사업주는 owner 아래에 저장
-        } else {
-            // 근로자일 경우: employees/{userId} 아래 저장
-            database.getReference("companies")
-                .child(companyCode)
-                .child("employees")
-                .child(userId)
-        }
+        val role = userRoleTextView.text.toString()
 
         val updatedData = mapOf(
             "username" to newUsername,
             "phone" to newPhone
         )
 
-        userRef.updateChildren(updatedData).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
+        // `UserData`를 활용하여 데이터 저장
+        UserData.saveUserData(companyCode, userId, updatedData, role) { success ->
+            if (success) {
                 usernameTextView.text = "이름: $newUsername"
                 phoneTextView.text = "전화번호: $newPhone"
 
@@ -215,11 +172,10 @@ class MyPageActivity : AppCompatActivity() {
                 isEditing = false
                 Toast.makeText(this, "정보가 성공적으로 저장되었습니다.", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this, "저장 실패: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "저장 실패", Toast.LENGTH_SHORT).show()
             }
         }
     }
-
 
     private fun logout() {
         auth.signOut()

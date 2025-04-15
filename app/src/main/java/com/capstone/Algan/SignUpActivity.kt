@@ -13,6 +13,7 @@ import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.capstone.Algan.utils.UserData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
@@ -207,7 +208,7 @@ class SignUpActivity : AppCompatActivity() {
         phone: String,
         companyCode: String
     ) {
-        isCompanyCodeValid(companyCode) { isValid ->
+        UserData.isCompanyCodeValid(this, companyCode) { isValid ->
             if (isValid) {
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this) { task ->
@@ -272,28 +273,6 @@ class SignUpActivity : AppCompatActivity() {
             }
         }
 
-    }
-
-
-    /**
-     * 회사 코드 유효성 검사 함수
-     */
-    private fun isCompanyCodeValid(companyCode: String, callback: (Boolean) -> Unit) {
-        database.reference.child("companies").child(companyCode).get()
-            .addOnSuccessListener { snapshot ->
-                if (snapshot.exists()) {
-                    Log.d("SignUpActivity", "회사 코드 확인 성공: $companyCode")
-                    callback(true)
-                } else {
-                    Log.d("SignUpActivity", "회사 코드 없음: $companyCode")
-                    callback(false)
-                }
-            }
-            .addOnFailureListener { e ->
-                Log.e("DatabaseError", "회사 코드 확인 실패: ${e.message}")
-                Toast.makeText(this, "회사 코드 확인 실패: ${e.message}", Toast.LENGTH_SHORT).show()
-                callback(false)
-            }
     }
 
 
