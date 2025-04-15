@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources><style name="CustomDatePickerTheme" parent="Theme.MaterialComponents.DayNight">
-    <!-- 주요 색상 설정 -->
-    <item name="colorPrimary">@color/primary_color</item>
-    <item name="colorPrimaryVariant">@color/primary_color</item>
-    <item name="colorOnPrimary">@color/white</item>
+<resources>
 
-</style>
+    <style name="CustomDatePickerDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <!-- 다이얼로그 배경색 -->
+        <item name="android:background">@color/colorAccent</item>
+        <!-- 제목 글자색 -->
+        <item name="android:textColorPrimary">@color/white</item>
+        <!-- 캘린더 날짜 등 글자색 -->
+        <item name="android:textColor">@color/white</item>
+        <!-- 버튼 색 -->
+        <item name="android:buttonStyle">@style/CustomButtonStyle</item>
+    </style>
 
+    <style name="CustomButtonStyle" parent="Widget.AppCompat.Button">
+        <item name="android:textColor">@color/white</item>
+    </style>
 </resources>
-
-
