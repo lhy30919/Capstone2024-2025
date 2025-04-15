@@ -38,37 +38,39 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
         val savebtn = findViewById<Button>(R.id.savebtn)
-        val emailField = findViewById<EditText>(R.id.Email)
+
         // 비밀번호 찾기 버튼 클릭 리스너
         savebtn.setOnClickListener {
-            val email = emailField.text.toString().trim() // 이메일 입력 필드에서 이메일 가져오기
+            val dialogView = layoutInflater.inflate(R.layout.dialog_password_find, null)
+            val emailEditText = dialogView.findViewById<EditText>(R.id.Email)
 
-            // 이메일이 비어 있는지 확인
-            if (email.isEmpty()) {
-                Toast.makeText(this, "이메일을 입력해주세요.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+            val dialog = android.app.AlertDialog.Builder(this)
+                .setView(dialogView)
+                .create()
+
+            val btnPassFind = dialogView.findViewById<Button>(R.id.btn_passfind)
+            btnPassFind.setOnClickListener {
+                val email = emailEditText.text.toString().trim()
+
+                if (email.isEmpty()) {
+                    Toast.makeText(this, "이메일을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                auth.sendPasswordResetEmail(email)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Toast.makeText(this, "비밀번호 재설정 이메일이 전송되었습니다.", Toast.LENGTH_SHORT).show()
+                            dialog.dismiss() // 다이얼로그 닫기
+                        } else {
+                            Toast.makeText(this, "이메일 전송에 실패했습니다. 이메일을 확인해주세요.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
             }
 
-            // 비밀번호 재설정 이메일 전송
-            auth.sendPasswordResetEmail(email)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        // 이메일 전송 성공
-                        Toast.makeText(
-                            this,
-                            "비밀번호 재설정 이메일이 전송되었습니다.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else {
-                        // 이메일 전송 실패
-                        Toast.makeText(
-                            this,
-                            "이메일 전송에 실패했습니다. 이메일을 확인해주세요.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
+            dialog.show()
         }
+
 
         val loginButton = findViewById<Button>(R.id.login_button)
         loginButton.setOnClickListener {
