@@ -214,6 +214,7 @@ class CommunicationFragment : Fragment() {
 
     // 현재 시간 반환
     private fun getCurrentTimestamp(): String {
+
         val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         return formatter.format(Date())
     }

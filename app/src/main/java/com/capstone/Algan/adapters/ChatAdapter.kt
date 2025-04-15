@@ -30,7 +30,7 @@ class ChatAdapter(
 
         // 메시지 내용 및 사용자 이름 설정
         holder.tvMessageContent.text = message.content ?: "" // null이면 빈 문자열 처리
-        holder.tvMessageTimestamp.text = message.timestampAsLong.toString()
+        holder.tvMessageTimestamp.text = message.timestamp.toString()
         holder.tvUsername.text = message.username ?: ""
 
         // 프로필 이미지 설정 (Picasso로 이미지 로딩)
