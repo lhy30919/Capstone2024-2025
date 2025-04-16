@@ -126,6 +126,7 @@ class ChecklistFragment : Fragment() {
 
                             requireActivity().runOnUiThread {
                                 setupEmployeeUI()
+
                                 loadChecklistsForEmployee(userId)
                                 callback()
                             }
