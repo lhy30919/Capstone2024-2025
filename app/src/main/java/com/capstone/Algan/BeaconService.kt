@@ -83,7 +83,6 @@ showToast("$rssi")
                 }
             }
         }
-
         try {
             beaconManager.startRangingBeacons(region)
         } catch (e: RemoteException) {
