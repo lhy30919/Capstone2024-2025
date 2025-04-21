@@ -2,8 +2,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- ScrollView with content -->
-    <ScrollView
+    <!-- NestedScrollView with content -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="56dp">
@@ -232,12 +232,13 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:divider="@android:color/darker_gray"
-                            android:dividerHeight="0.5dp" />
+                            android:dividerHeight="0.5dp"
+                            android:nestedScrollingEnabled="false" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <!-- 급여 계산기 -->
     <android.widget.Button

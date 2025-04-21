@@ -116,12 +116,14 @@ class SalaryFragment : Fragment() {
             Worker("근로자 2", "09:00 ~ 18:00", 96000.0, 8.0, 8.0, 12000.0, 10.0),
             Worker("근로자 3", "09:00 ~ 18:00", 120000.0, 8.0, 8.0, 15000.0, 15.0)
         )
-
-        // Spinner Adapter 설정
-        val workerNames = workerList.map { it.name }
+// Spinner Adapter 설정
+        val workerNames = mutableListOf("전체") // "전체" 항목 추가
+        workerNames.addAll(workerList.map { it.name }) // 기존 근로자 이름 추가
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, workerNames)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerWorker.adapter = adapter
+        // Spinner Adapter 설정
+
 
         // RecyclerView Adapter 설정
         salaryRecordAdapter = SalaryRecordAdapter(requireContext(), workerList)
@@ -142,9 +144,14 @@ class SalaryFragment : Fragment() {
         // 근로자 선택 시 처리
         spinnerWorker.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parentView: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val selectedWorker = workerList[position]
-                // 선택된 근로자의 기록 갱신 (예시)
-                updateSalaryRecords(selectedWorker)
+                if (position == 0) { // "전체"가 선택된 경우
+                    // 모든 근로자의 기록을 RecyclerView에 표시
+                    salaryRecordAdapter.updateData(workerList)
+                } else {
+                    // 선택된 근로자의 기록 갱신
+                    val selectedWorker = workerList[position - 1] // "전체"가 추가되었으므로 -1
+                    updateSalaryRecords(selectedWorker)
+                }
             }
 
             override fun onNothingSelected(parentView: AdapterView<*>?) {
