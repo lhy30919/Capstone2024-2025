@@ -3,9 +3,11 @@ package com.capstone.Algan
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import com.capstone.Algan.utils.UserData
 import com.google.firebase.auth.FirebaseAuth
 
@@ -24,6 +26,12 @@ class MyPageActivity : AppCompatActivity() {
 
     private lateinit var usernameEditText: EditText
     private lateinit var phoneEditText: EditText
+    private lateinit var profileImageView: ImageView
+    private lateinit var profileImageView2 : ImageView
+
+    // 요청 코드 상수 정의
+    private val GALLERY_REQUEST_CODE = 100
+    private val CAMERA_REQUEST_CODE = 101
 
     private var isEditing = false // 수정 모드 여부 체크
 
@@ -47,6 +55,16 @@ class MyPageActivity : AppCompatActivity() {
 
         usernameEditText = findViewById(R.id.usernameEditText)
         phoneEditText = findViewById(R.id.phoneEditText)
+
+        profileImageView = findViewById(R.id.profileImageView)
+        profileImageView2=findViewById(R.id.profileImageView2)
+
+        profileImageView2.setOnClickListener {
+            if (isEditing) {
+                showImagePickerDialog()
+            }
+        }
+
 
         loadUserData()
 
@@ -114,6 +132,25 @@ class MyPageActivity : AppCompatActivity() {
             companyCodeTextView.text = "회사 코드: $companyCode"
         }
     }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == RESULT_OK && data != null) {
+            when (requestCode) {
+                GALLERY_REQUEST_CODE -> {
+                    val imageUri = data.data
+                    profileImageView.setImageURI(imageUri)
+                    profileImageView2.setImageURI(imageUri)
+                }
+
+                CAMERA_REQUEST_CODE -> {
+                    val imageBitmap = data.extras?.get("data") as? android.graphics.Bitmap
+                    profileImageView.setImageBitmap(imageBitmap)
+                    profileImageView2.setImageBitmap(imageBitmap)
+                }
+            }
+        }
+    }
 
     private fun toggleEditMode() {
         if (isEditing) {
@@ -126,8 +163,12 @@ class MyPageActivity : AppCompatActivity() {
 
     private fun enableEditing(enable: Boolean) {
         if (enable) {
+            profileImageView.visibility=View.GONE
+
             usernameTextView.visibility = View.GONE
             phoneTextView.visibility = View.GONE
+
+            profileImageView2.visibility=View.VISIBLE
 
             usernameEditText.visibility = View.VISIBLE
             phoneEditText.visibility = View.VISIBLE
@@ -137,9 +178,13 @@ class MyPageActivity : AppCompatActivity() {
 
             editButton.text = "저장하기"
         } else {
+            profileImageView.visibility=View.VISIBLE
+
             usernameTextView.visibility = View.VISIBLE
             emailTextView.visibility = View.VISIBLE
             phoneTextView.visibility = View.VISIBLE
+
+            profileImageView2.visibility=View.GONE
 
             usernameEditText.visibility = View.GONE
             phoneEditText.visibility = View.GONE
@@ -176,7 +221,28 @@ class MyPageActivity : AppCompatActivity() {
             }
         }
     }
+    private fun showImagePickerDialog() {
+        val options = arrayOf("갤러리에서 선택", "카메라로 사진 찍기")
+        android.app.AlertDialog.Builder(this)
+            .setTitle("사진 선택 방법")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> openGallery()
+                    1 -> openCamera()
+                }
+            }
+            .show()
+    }
+    private fun openGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        intent.type = "image/*"
+        startActivityForResult(intent, GALLERY_REQUEST_CODE)
+    }
 
+    private fun openCamera() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivityForResult(intent, CAMERA_REQUEST_CODE)
+    }
     private fun logout() {
         auth.signOut()
         val sharedPreferences = getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
