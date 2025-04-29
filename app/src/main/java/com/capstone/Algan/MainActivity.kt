@@ -50,8 +50,8 @@ class MainActivity : AppCompatActivity() {
         }
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
 
-        // 기본 화면으로 급여 화면을 설정
-        replaceFragment(SalaryFragment())
+        // 기본 화면으로 출퇴근 화면을 설정
+        replaceFragment(WorkRecordFragment())
 
         // 하단 내비게이션 아이템 클릭 리스너 설정
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
