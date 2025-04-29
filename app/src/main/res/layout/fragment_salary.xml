@@ -260,4 +260,5 @@
         android:layout_marginRight="16dp"
         android:background="@drawable/circle_button"
         android:text="전체\n공제" />
+
 </FrameLayout>

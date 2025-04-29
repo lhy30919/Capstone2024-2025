@@ -17,6 +17,7 @@ import com.google.firebase.database.*
 import java.text.SimpleDateFormat
 import java.util.*
 import org.altbeacon.beacon.* // 비콘
+import com.capstone.Algan.utils.pdfWordRecord
 
 class WorkRecordFragment : Fragment() {
     private lateinit var beaconManager: BeaconManager// 비콘
@@ -46,6 +47,7 @@ class WorkRecordFragment : Fragment() {
     private var companyCode: String? = null
     private var companyName: String? = null
     private var isEmployer: Boolean = false
+    private var worktype:String?=null
 
     // RecyclerView 관련 변수
     private lateinit var recordAdapter: RecordAdapter
@@ -72,6 +74,7 @@ class WorkRecordFragment : Fragment() {
         BeaconState.isConnected.observe(viewLifecycleOwner, androidx.lifecycle.Observer { isConnected ->
             if (isConnected) {
                 handleClockInOut()
+                worktype ="비콘"
                 Toast.makeText(requireContext(), "비콘 연결됨.", Toast.LENGTH_SHORT)
                     .show()
             } else {
@@ -80,6 +83,18 @@ class WorkRecordFragment : Fragment() {
                     .show()
             }
         })
+        val btnPdf = view.findViewById<Button>(R.id.btnPdf)  // 뷰에서 직접 버튼 찾아오기
+
+        btnPdf.setOnClickListener {
+            fetchRecords { workTimeList ->
+                if (workTimeList.isNotEmpty()) {
+                    val pdfPath = pdfWordRecord(requireContext(), workTimeList)
+                    Toast.makeText(requireContext(), "PDF 저장 완료: $pdfPath", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), "출퇴근 기록이 없습니다", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
 
         btnClockInOut.setOnClickListener {
 
@@ -147,7 +162,16 @@ class WorkRecordFragment : Fragment() {
                             isEmployer = false
                             userFound = true
                             setupUIForRole()
-                            fetchRecords() // 근로자 본인의 기록 가져오기
+                            // 근로자 본인의 기록을 가져오도록 fetchRecords 호출
+                            fetchRecords { workTimeList ->
+                                // 콜백에서 반환된 workTimeList를 처리
+                                if (workTimeList.isNotEmpty()) {
+                                    // 작업이 성공적으로 완료된 경우
+                                    // 예: 리스트 표시 등
+                                } else {
+                                    // 기록이 없을 경우 처리
+                                }
+                            }
                             break
                         }
                     }
@@ -209,7 +233,16 @@ class WorkRecordFragment : Fragment() {
                 parent: AdapterView<*>, view: View?, position: Int, id: Long
             ) {
                 selectedWorkerUid = workerList[position].uid
-                fetchRecords() // 선택된 근로자의 기록을 가져옵니다.
+                // 근로자 본인의 기록을 가져오도록 fetchRecords 호출
+                fetchRecords { workTimeList ->
+                    // 콜백에서 반환된 workTimeList를 처리
+                    if (workTimeList.isNotEmpty()) {
+                        // 작업이 성공적으로 완료된 경우
+                        // 예: 리스트 표시 등
+                    } else {
+                        // 기록이 없을 경우 처리
+                    }
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
@@ -218,7 +251,16 @@ class WorkRecordFragment : Fragment() {
         // 기본 선택 설정
         if (workerList.isNotEmpty()) {
             selectedWorkerUid = workerList[0].uid
-            fetchRecords()
+            // 근로자 본인의 기록을 가져오도록 fetchRecords 호출
+            fetchRecords { workTimeList ->
+                // 콜백에서 반환된 workTimeList를 처리
+                if (workTimeList.isNotEmpty()) {
+                    // 작업이 성공적으로 완료된 경우
+                    // 예: 리스트 표시 등
+                } else {
+                    // 기록이 없을 경우 처리
+                }
+            }
         }
     }
     // 역할에 따른 UI 변경
@@ -255,14 +297,32 @@ class WorkRecordFragment : Fragment() {
         tvStartDate.setOnClickListener {
             showDatePicker { selectedDate ->
                 tvStartDate.text = selectedDate
-                fetchRecords()
+                // 근로자 본인의 기록을 가져오도록 fetchRecords 호출
+                fetchRecords { workTimeList ->
+                    // 콜백에서 반환된 workTimeList를 처리
+                    if (workTimeList.isNotEmpty()) {
+                        // 작업이 성공적으로 완료된 경우
+                        // 예: 리스트 표시 등
+                    } else {
+                        // 기록이 없을 경우 처리
+                    }
+                }
             }
         }
 
         tvEndDate.setOnClickListener {
             showDatePicker { selectedDate ->
                 tvEndDate.text = selectedDate
-                fetchRecords()
+                // 근로자 본인의 기록을 가져오도록 fetchRecords 호출
+                fetchRecords { workTimeList ->
+                    // 콜백에서 반환된 workTimeList를 처리
+                    if (workTimeList.isNotEmpty()) {
+                        // 작업이 성공적으로 완료된 경우
+                        // 예: 리스트 표시 등
+                    } else {
+                        // 기록이 없을 경우 처리
+                    }
+                }
             }
         }
     }
@@ -332,7 +392,8 @@ class WorkRecordFragment : Fragment() {
             clockOut = closeTime,
             workedHours = calculateWorkedHours(openTime, closeTime),
             //hourlyRate = hourlyRate ?: "10000",
-            userName = username ?: "알 수 없는 사용자"
+            userName = username ?: "알 수 없는 사용자",
+            worktype=worktype?:"수동"
         )
 
         // 데이터를 회사 코드 아래에 저장
@@ -340,7 +401,16 @@ class WorkRecordFragment : Fragment() {
         workTimeRef.push().setValue(workTime)
             .addOnSuccessListener {
                 // 저장 후 기록을 다시 가져와 RecyclerView를 갱신합니다.
-                fetchRecords()
+                // 근로자 본인의 기록을 가져오도록 fetchRecords 호출
+                fetchRecords { workTimeList ->
+                    // 콜백에서 반환된 workTimeList를 처리
+                    if (workTimeList.isNotEmpty()) {
+                        // 작업이 성공적으로 완료된 경우
+                        // 예: 리스트 표시 등
+                    } else {
+                        // 기록이 없을 경우 처리
+                    }
+                }
                 Toast.makeText(requireContext(), "출퇴근 기록이 저장되었습니다.", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener {
@@ -348,8 +418,7 @@ class WorkRecordFragment : Fragment() {
             }
     }
 
-    // 기록 가져오기
-    private fun fetchRecords() {
+    private fun fetchRecords(onResult: (List<WorkTime>) -> Unit) {
         records.clear()
         val startDateStr = tvStartDate.text.toString()
         val endDateStr = tvEndDate.text.toString()
@@ -358,16 +427,11 @@ class WorkRecordFragment : Fragment() {
         val endDate = dateFormat.parse(endDateStr)
 
         val queryUid = if (isEmployer) selectedWorkerUid else uid
-
         val workTimeRef = database.child("worktimes").child(companyCode ?: "unknown_company")
 
         workTimeRef.orderByChild("uid").equalTo(queryUid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-
-                    Log.d("WorkRecordFragment", "Fetching records for UID: $queryUid")
-                    Log.d("WorkRecordFragment", "Start Date: $startDateStr, End Date: $endDateStr")
-
                     for (recordSnapshot in snapshot.children) {
                         val workRecord = recordSnapshot.getValue(WorkTime::class.java)
                         if (workRecord != null) {
@@ -379,20 +443,24 @@ class WorkRecordFragment : Fragment() {
                             }
                         }
                     }
-                    records.sortByDescending { it.date } // 날짜 순으로 정렬
+                    records.sortByDescending { it.date }
                     recordAdapter.notifyDataSetChanged()
 
                     if (records.isEmpty()) {
-                        Toast.makeText(requireContext(), "해당 기간의 기록이 없습니다.", Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(requireContext(), "해당 기간의 기록이 없습니다.", Toast.LENGTH_SHORT).show()
                     }
+
+                    // ✅ 콜백 호출
+                    onResult(records)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
                     Toast.makeText(requireContext(), "기록을 불러오는데 실패했습니다.", Toast.LENGTH_SHORT).show()
+                    onResult(emptyList())  // 에러 발생 시도 콜백
                 }
             })
     }
+
     // 현재 시간 가져오기
     private fun getCurrentTime(): String {
         val currentTimeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
@@ -410,7 +478,8 @@ class WorkRecordFragment : Fragment() {
             val diff = dateOut.time - dateIn.time
             val hours = diff / (1000 * 60 * 60)
             val minutes = (diff / (1000 * 60)) % 60
-            String.format("%02d:%02d", hours, minutes)
+            val seconds = (diff / 1000) % 60
+            String.format("%02d:%02d:%02d", hours, minutes, seconds)
         } catch (e: Exception) {
             "00:00"
         }

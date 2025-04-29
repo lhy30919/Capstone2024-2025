@@ -27,7 +27,7 @@ android {
             )
         }
     }
-    buildFeatures{
+    buildFeatures {
         viewBinding = true
     }
     compileOptions {
@@ -42,9 +42,14 @@ android {
 dependencies {
     implementation("org.altbeacon:android-beacon-library:2.19.5") //비콘
 
+    implementation ("com.itextpdf:itext7-core:7.2.5")  // PDF
+
     implementation("com.google.firebase:firebase-auth")
 
-    implementation ("com.squareup.picasso:picasso:2.71828")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    implementation("com.squareup.picasso:picasso:2.71828")
     implementation("com.google.firebase:firebase-analytics")
     implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
     implementation("androidx.core:core-ktx:1.9.0")
@@ -54,7 +59,7 @@ dependencies {
     implementation("com.google.firebase:firebase-database")
     implementation("androidx.activity:activity:1.9.3")
     implementation("com.google.firebase:firebase-firestore-ktx:25.1.1")
-    implementation ("com.google.firebase:firebase-messaging-ktx")
+    implementation("com.google.firebase:firebase-messaging-ktx")
     implementation("androidx.recyclerview:recyclerview:1.4.0") //fcm
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

@@ -23,6 +23,7 @@ class RecordAdapter(private val records: MutableList<WorkTime>) :
         holder.tvCloseTime.text = formatTimeForTable(record.clockOut)
         holder.tvWorkedHours.text = record.workedHours
         holder.tvWorkerName.text = record.userName // 이름 추가
+        holder.tvType.text = record.worktype
     }
 
     override fun getItemCount(): Int {
@@ -36,15 +37,11 @@ class RecordAdapter(private val records: MutableList<WorkTime>) :
         val tvCloseTime: TextView = itemView.findViewById(R.id.tvClockOut)
         val tvWorkedHours: TextView = itemView.findViewById(R.id.tvWorkedHours)
         val tvWorkerName: TextView = itemView.findViewById(R.id.tvWorkerName) // 이름 표시
+        val tvType: TextView = itemView.findViewById(R.id.tvType)// 비콘 수동 구분
     }
 
-    // 표에 시간 형식 변경: 시:분만 표시
+    // 스트링 변환
     private fun formatTimeForTable(time: String): String {
-        val timeParts = time.split(":")
-        return if (timeParts.size >= 2) {
-            "${timeParts[0]}:${timeParts[1]}"
-        } else {
-            time
-        }
+        return time
     }
 }

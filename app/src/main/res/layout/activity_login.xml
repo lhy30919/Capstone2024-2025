@@ -76,7 +76,7 @@
         app:strokeWidth="0dp" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/savebtn"
+        android:id="@+id/passwordfind_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="비밀번호 찾기"

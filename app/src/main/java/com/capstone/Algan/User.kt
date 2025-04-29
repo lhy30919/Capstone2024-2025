@@ -42,7 +42,8 @@ data class WorkTime(
     val clockIn: String = "",
     val clockOut: String = "",
     val workedHours: String = "",
-    val userName: String = "" // 근로자 이름 (사용자의 username)
+    val userName: String = "", // 근로자 이름 (사용자의 username)
+    val worktype:String=""
 )
 
 // 급여기능 근로자 데이터 클래스
