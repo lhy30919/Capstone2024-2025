@@ -37,7 +37,7 @@ class LoginActivity : AppCompatActivity() {
         }
         val pwdfindButton = findViewById<Button>(R.id.passwordfind_button)
 
-        // 비밀번호 찾기 버튼 클릭 리스너
+
         pwdfindButton.setOnClickListener {
             val dialogView = layoutInflater.inflate(R.layout.dialog_password_find, null)
             val emailEditText = dialogView.findViewById<EditText>(R.id.Email)
