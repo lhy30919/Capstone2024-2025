@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 //알림 화면으로 이동
-                R.id.menu_alam ->{
+                R.id.menu_alam -> {
                     replaceFragment(AlamFragment())
                     true
                 }
@@ -45,13 +45,14 @@ class MainActivity : AppCompatActivity() {
                     startActivity(intent)
                     true
                 }
+
                 else -> false
             }
         }
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
 
         // 기본 화면으로 출퇴근 화면을 설정
-        replaceFragment(WorkRecordFragment())
+        replaceFragment(SalaryFragment())
 
         // 하단 내비게이션 아이템 클릭 리스너 설정
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
@@ -60,18 +61,22 @@ class MainActivity : AppCompatActivity() {
                     replaceFragment(SalaryFragment()) // 급여 화면으로 이동
                     true
                 }
+
                 R.id.fragment_noticeboard -> {
                     replaceFragment(NoticeBoardFragment()) // 게시판 화면으로 이동
                     true
                 }
+
                 R.id.fragment_checklist -> {
                     replaceFragment(ChecklistFragment()) // 체크리스트 화면으로 이동
                     true
                 }
+
                 R.id.fragment_workrecord -> {
                     replaceFragment(WorkRecordFragment()) // 출퇴근 기록 화면으로 이동
                     true
                 }
+
                 else -> false
             }
         }
@@ -102,6 +107,7 @@ class MainActivity : AppCompatActivity() {
         backPressedTime = currentTime
     }
 }
+
 class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()

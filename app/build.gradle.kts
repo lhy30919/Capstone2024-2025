@@ -44,7 +44,8 @@ dependencies {
 
     implementation ("com.itextpdf:itext7-core:7.2.5")  // PDF
 
-    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-auth:22.3.0")
+
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")

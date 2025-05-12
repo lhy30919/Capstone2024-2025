@@ -133,6 +133,7 @@ class WorkRecordFragment : Fragment() {
         // companies 노드에서 현재 유저의 UID를 기반으로 사업주 또는 근로자 정보 검색
         database.child("companies").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                if (!isAdded) return
                 var userFound = false
                 for (companySnapshot in snapshot.children) {
                     // 사업주 확인
@@ -200,6 +201,7 @@ class WorkRecordFragment : Fragment() {
             .child("employees") // companies/{companyCode}/employees 경로 접근
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
+                    if (!isAdded) return
                     workerList.clear()
                     for (workerSnapshot in snapshot.children) {
                         val workerRole = workerSnapshot.child("role").getValue(String::class.java)
@@ -223,10 +225,12 @@ class WorkRecordFragment : Fragment() {
     // 근로자 선택 스피너 설정
     private fun setupWorkerSpinner() {
         val workerNames = workerList.map { it.username }
-        val adapter =
-            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, workerNames)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerWorker.adapter = adapter
+
+        context?.let { safeContext ->
+            val adapter = ArrayAdapter(safeContext, android.R.layout.simple_spinner_item, workerNames)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinnerWorker.adapter = adapter
+        }
 
         spinnerWorker.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -432,6 +436,7 @@ class WorkRecordFragment : Fragment() {
         workTimeRef.orderByChild("uid").equalTo(queryUid)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
+                    if (!isAdded) return
                     for (recordSnapshot in snapshot.children) {
                         val workRecord = recordSnapshot.getValue(WorkTime::class.java)
                         if (workRecord != null) {

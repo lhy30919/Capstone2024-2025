@@ -1,5 +1,6 @@
 package com.capstone.Algan
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable

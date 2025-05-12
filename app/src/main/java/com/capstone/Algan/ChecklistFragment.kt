@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class ChecklistFragment : Fragment() {
+
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
     private var _binding: FragmentChecklistBinding? = null
@@ -52,7 +53,6 @@ class ChecklistFragment : Fragment() {
         } ?: run {
             Toast.makeText(requireContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
         }
-
 
 
         // ListView 스크롤 활성화 및 설정
@@ -114,6 +114,14 @@ class ChecklistFragment : Fragment() {
             })
     }
 
+    private fun setupEmployeeSpinner(employeeList: List<String>) {
+        val adapter =
+            ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, employeeList)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerEmployees.adapter = adapter
+    }
+
+    // 로그인한 사용자가 근로자인지 확인
     private fun checkIfEmployee(userId: String, callback: () -> Unit) {
         database.child("companies").orderByChild("employees/$userId/uid").equalTo(userId)
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -142,6 +150,7 @@ class ChecklistFragment : Fragment() {
                 }
             })
     }
+
 
     // 🔹 근로자 목록 가져오기 및 콜백 추가
     private fun fetchWorkerList(callback: () -> Unit) {
@@ -194,6 +203,7 @@ class ChecklistFragment : Fragment() {
 
     // 🔹 사업주 UI 설정
     private fun setupBusinessOwnerUI() {
+        binding.linsendcheck.visibility=View.VISIBLE
         binding.tvselectEmployees.visibility = View.VISIBLE
         binding.spinnerEmployees.visibility = View.VISIBLE
         binding.textViewItemContent.visibility = View.VISIBLE
@@ -203,9 +213,10 @@ class ChecklistFragment : Fragment() {
 
     // 🔹 근로자 UI 설정
     private fun setupEmployeeUI() {
+        binding.linsendcheck.visibility=View.GONE
         binding.tvselectEmployees.visibility = View.GONE
         binding.spinnerEmployees.visibility = View.GONE
-        binding.spinnerEmployees.isEnabled=false
+        binding.spinnerEmployees.isEnabled = false
         binding.textViewItemContent.visibility = View.GONE
         binding.editTextItemContent.visibility = View.GONE
         binding.buttonAddItem.visibility = View.GONE
@@ -348,7 +359,8 @@ class ChecklistFragment : Fragment() {
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         binding.spinnerEmployees.adapter = spinnerAdapter
-        binding.spinnerEmployees.visibility = View.VISIBLE
+        if (isBusinessOwner)
+            binding.spinnerEmployees.visibility = View.VISIBLE
         spinnerAdapter.notifyDataSetChanged()
 
         // Spinner 항목 선택 리스너 추가
@@ -624,7 +636,11 @@ class ChecklistFragment : Fragment() {
                 checklistRef.updateChildren(updates)
                     .addOnSuccessListener {
                         Log.d("ChecklistFragment", "체크리스트 상태 업데이트 성공: ${item.uid} -> $newStatus")
-                        updateBusinessOwnerChecklist(item, newStatus, companyCode) // 🔹 companyCode 넘겨줌
+                        updateBusinessOwnerChecklist(
+                            item,
+                            newStatus,
+                            companyCode
+                        ) // 🔹 companyCode 넘겨줌
                     }
                     .addOnFailureListener { e ->
                         Log.e("ChecklistFragment", "체크리스트 상태 업데이트 실패", e)
@@ -648,8 +664,13 @@ class ChecklistFragment : Fragment() {
         }
     }
 }
+
 // 사업주 체크리스트 업데이트 함수
-private fun updateBusinessOwnerChecklist(checklistItem: CheckList, newStatus: String, companyCode: String) {
+private fun updateBusinessOwnerChecklist(
+    checklistItem: CheckList,
+    newStatus: String,
+    companyCode: String
+) {
     val database = FirebaseDatabase.getInstance().reference
     val ownerChecklistRef = database.child("checklist").child(companyCode).child(checklistItem.uid)
     val updates = mapOf<String, Any>(

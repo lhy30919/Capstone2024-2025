@@ -1,8 +1,10 @@
 package com.capstone.Algan
 
 import android.Manifest
+import android.content.SharedPreferences
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -31,7 +33,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class NoticeFragment : Fragment() {
-    private lateinit var LinChat: LinearLayout
+    //private lateinit var LinChat: LinearLayout
     private lateinit var recyclerView: RecyclerView
     private lateinit var editTextMessage: EditText
     private lateinit var buttonSend: Button
@@ -40,6 +42,7 @@ class NoticeFragment : Fragment() {
     private lateinit var chatAdapter: ChatAdapter
     private var selectedImageUri: Uri? = null
     private val messageList = mutableListOf<Message>()
+    private lateinit var sharedPreferences: SharedPreferences
 
     private lateinit var userRole: String
     private lateinit var companyCode: String
@@ -76,9 +79,11 @@ class NoticeFragment : Fragment() {
         buttonSend = view.findViewById(R.id.button_send)
         buttonAttach = view.findViewById(R.id.button_select_image)
         imageViewPreview = view.findViewById(R.id.imageView_preview)
+        // SharedPreferences 초기화
+        sharedPreferences = requireContext().getSharedPreferences("UserPreferences", Activity.MODE_PRIVATE)
 
         // 현재 로그인한 사용자 이름 가져오기
-        val currentUser = FirebaseAuth.getInstance().currentUser?.displayName ?: "Unknown User"
+        val currentUser = sharedPreferences.getString("username", "Unknown User") ?: "Unknown User"
 
         // RecyclerView 설정
         chatAdapter = ChatAdapter(messageList, currentUser, forceLeftGravity = true)

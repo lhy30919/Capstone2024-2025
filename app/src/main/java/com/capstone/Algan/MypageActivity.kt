@@ -20,7 +20,6 @@ class MyPageActivity : AppCompatActivity() {
     private lateinit var companyNameTextView: TextView
     private lateinit var companyCodeTextView: TextView
     private lateinit var userRoleTextView: TextView
-    private lateinit var timeSalaryTextView: TextView
     private lateinit var logoutButton: Button
     private lateinit var editButton: Button
 
@@ -49,7 +48,7 @@ class MyPageActivity : AppCompatActivity() {
         phoneTextView = findViewById(R.id.phoneTextView)
         companyNameTextView = findViewById(R.id.companyNameTextView)
         companyCodeTextView = findViewById(R.id.companyCodeTextView)
-        timeSalaryTextView = findViewById(R.id.timeSalaryTextView)
+
         logoutButton = findViewById(R.id.logoutButton)
         editButton = findViewById(R.id.editButton)
 
@@ -114,15 +113,6 @@ class MyPageActivity : AppCompatActivity() {
             UserData.getUserRole(companyCode, userId) { role ->
                 userRoleTextView.text = role ?: "알 수 없음"
 
-                // 근로자일 경우 시급 표시
-                if (role == "근로자") {
-                    UserData.getUserSalary(companyCode, userId) { salary ->
-                        timeSalaryTextView.text = "시급: ${salary ?: "알 수 없음"}"
-                        timeSalaryTextView.visibility = View.VISIBLE
-                    }
-                } else {
-                    timeSalaryTextView.visibility = View.GONE
-                }
             }
 
             UserData.getCompanyName(companyCode) { companyName ->

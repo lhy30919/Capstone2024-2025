@@ -2,81 +2,106 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/light_gray_background"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@color/light_background">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="56dp"/>
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp" />
+
+    <LinearLayout
+        android:id="@+id/linsendcheck"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/card_bg"
+        android:elevation="4dp"
+        android:orientation="vertical"
+        android:padding="12dp">
 
         <!-- 근로자 선택 -->
         <TextView
             android:id="@+id/tvselectEmployees"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="8dp"
             android:text="근로자 선택"
-            android:textSize="18sp"
             android:textColor="@android:color/black"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"/>
+            android:textSize="18sp" />
 
         <Spinner
             android:id="@+id/spinnerEmployees"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/textViewItemContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="내용 입력"
-            android:textSize="18sp"
-            android:textColor="@android:color/black"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="8dp"
+            android:text="내용 입력"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/editTextItemContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
             android:hint="항목 내용"
-            android:textSize="16sp"
-            android:layout_marginBottom="16dp"/>
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/button_addItem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="선택한 근로자에게 보내기"
-            android:textColor="@color/white"
+            android:layout_marginBottom="16dp"
             android:backgroundTint="@color/secondary_text"
-            android:layout_marginBottom="16dp"/>
+            android:text="선택한 근로자에게 보내기"
+            android:textColor="@color/white" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/card_bg"
+        android:elevation="4dp"
+        android:paddingTop="6dp"
+        android:paddingLeft="16dp"
+        android:paddingBottom="2dp"
+        android:layout_marginBottom="16dp">
 
-        <!-- 추가된 항목 리스트 -->
-        <TextView
-            android:id="@+id/textViewChecklist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="체크리스트"
-            android:textSize="18sp"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="8dp"/>
+    <!-- 추가된 항목 리스트 -->
+    <TextView
+        android:id="@+id/textViewChecklist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="체크리스트"
+        android:textColor="@android:color/black"
+        android:textSize="18sp" />
+    </LinearLayout>
 
-        <!-- 리스트 뷰를 NestedScrollView와 함께 사용 -->
-        <androidx.core.widget.NestedScrollView
+    <!-- 리스트 뷰를 NestedScrollView와 함께 사용 -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:scrollbars="vertical">
+
+        <ListView
+            android:id="@+id/listViewItems"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:fillViewport="true"
-            android:scrollbars="vertical">
+            android:layout_height="wrap_content"
+            android:divider="@android:color/darker_gray"
+            android:nestedScrollingEnabled="true"
+            android:overScrollMode="ifContentScrolls" />
+    </androidx.core.widget.NestedScrollView>
 
-                <ListView
-                    android:id="@+id/listViewItems"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:divider="@android:color/darker_gray"
-                    android:overScrollMode="ifContentScrolls"
-                    android:nestedScrollingEnabled="true"/>
-        </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

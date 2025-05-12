@@ -1,5 +1,6 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:background="@color/light_gray_background"
     android:layout_height="match_parent">
 
     <LinearLayout
@@ -77,15 +78,29 @@
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-
+    <LinearLayout
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:background="@drawable/card_bg"
+        android:elevation="4dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:orientation="vertical">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="#CCCCCC"
+            android:background="@drawable/card_bg"
             android:text="근로 기록 검색"
             android:textAlignment="center"
             android:textStyle="bold" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#CCCCCC" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -150,7 +165,7 @@
                 android:gravity="center"
                 android:padding="16dp" />
         </LinearLayout>
-
+    </LinearLayout>
         <!-- 출퇴근 기록 리스트 -->
         <ScrollView
             android:layout_width="match_parent"

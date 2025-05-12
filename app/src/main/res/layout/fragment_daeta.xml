@@ -2,27 +2,29 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#BDBDBD"
+    android:background="#F5F5F5"
     android:orientation="vertical"
-    android:padding="0dp">
+    android:padding="12dp">
 
     <!-- 대타 신청 리스트와 대타 요청이 없을 때 메시지 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginLeft="3dp"
-        android:layout_marginTop="3dp"
-        android:layout_marginRight="3dp"
+        android:layout_marginHorizontal="4dp"
+        android:layout_marginBottom="12dp"
         android:layout_weight="1"
-        android:background="@color/light_background"
-        android:orientation="vertical">
+        android:background="@android:color/white"
+        android:elevation="2dp"
+        android:orientation="vertical"
+        android:padding="8dp">
 
         <!-- 대타 신청 리스트 -->
         <ListView
             android:id="@+id/listViewSubstituteRequests"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/light_background"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@android:color/white"
             android:divider="@android:color/darker_gray"
             android:dividerHeight="1dp" />
 
@@ -31,91 +33,92 @@
             android:id="@+id/textNoRequests"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="50dp"
             android:gravity="center"
+            android:padding="24dp"
             android:text="대타 내역이 없습니다!"
-            android:textAlignment="center"
             android:textColor="@android:color/darker_gray"
-            android:textSize="30sp"
+            android:textSize="18sp"
             android:visibility="gone" />
     </LinearLayout>
 
-    <!-- 나의 대타 요청, 나의 대타 수락, 대타 신청 버튼 -->
+    <!-- 버튼 섹션 -->
     <LinearLayout
         android:id="@+id/LinownerDaeta"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="4dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/white"
+        android:clipToPadding="false"
+        android:elevation="2dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:visibility="visible">
+        android:padding="4dp"
+        android:weightSum="7">
 
+        <!-- 전체 대타 -->
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1">
+            android:layout_margin="4dp"
+            android:layout_weight="2">
 
-            <!-- 나의 대타 수락 내역 버튼 -->
-            <android.widget.Button
+            <Button
                 android:id="@+id/buttonAllSubstituteRequests"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:background="@drawable/daeta_button"
+                android:layout_height="40dp"
+                android:backgroundTint="#E0E0E0"
+                android:elevation="1dp"
                 android:text="전체 대타"
-                android:textAlignment="center"
-                android:textColor="@android:color/black"
-                android:textSize="14dp"
-                android:tint="@color/noticeboard_background" />
+                android:textColor="#000000"
+                android:textSize="14sp" />
         </FrameLayout>
-        <!-- 나의 대타요청은 근로자만 보이게-->
+
+        <!-- 나의 대타 요청 -->
         <FrameLayout
             android:id="@+id/frameDaetaRequest"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1">
+            android:layout_margin="4dp"
+            android:layout_weight="2">
 
-            <!-- 나의 대타 요청 내역 버튼 -->
-            <android.widget.Button
+            <Button
                 android:id="@+id/buttonMySubstituteRequest"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:background="@drawable/daeta_button"
-                android:text="나의 대타 요청"
-                android:textAlignment="center"
-                android:textColor="@android:color/black"
-                android:textSize="14dp"
-                android:tint="@color/noticeboard_background" />
+                android:layout_height="40dp"
+                android:backgroundTint="#E0E0E0"
+                android:elevation="1dp"
+                android:text="내 요청"
+                android:textColor="#000000"
+                android:textSize="14sp" />
         </FrameLayout>
 
+        <!-- 대타 수락 내역 -->
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1">
+            android:layout_margin="4dp"
+            android:layout_weight="2">
 
-            <!-- 나의 대타 수락 내역 버튼 -->
-            <android.widget.Button
+            <Button
                 android:id="@+id/buttonMySubstituteAccept"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:background="@drawable/daeta_button"
-                android:text="대타 수락 내역"
-                android:textAlignment="center"
-                android:textColor="@android:color/black"
-                android:textSize="14dp"
-                android:tint="@color/noticeboard_background" />
+                android:layout_height="40dp"
+                android:backgroundTint="#E0E0E0"
+                android:elevation="1dp"
+                android:text="내 수락"
+                android:textColor="#000000"
+                android:textSize="14sp" />
         </FrameLayout>
 
-        <!-- 대타 신청 이미지 버튼 -->
+        <!-- 대타 신청 버튼 (이미지 버튼 개선) -->
         <ImageButton
             android:id="@+id/buttonRequestSubstitute"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="end"
-            android:layout_marginEnd="5dp"
-            android:background="@color/noticeboard_background"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="대타 신청 버튼"
             android:src="@drawable/baseline_mode_24" />
     </LinearLayout>

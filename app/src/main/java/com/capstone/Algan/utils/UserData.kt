@@ -8,7 +8,7 @@ import com.google.firebase.database.*
 object UserData {
     private val database = FirebaseDatabase.getInstance()
 
-    // 🔹 기존 함수 유지 및 리팩토링
+
     fun fetchAndSaveUserInfo(
         context: Context,
         userId: String,

@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="DeductionText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingTop">4dp</item>
+    </style>
+
     <style name="CustomDatePickerDialogTheme" parent="Theme.AppCompat.Light.Dialog">
         <!-- 다이얼로그 배경색 -->
         <item name="android:background">@color/colorAccent</item>
