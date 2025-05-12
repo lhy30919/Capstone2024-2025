@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="8dp"
+    android:paddingLeft="18dp"
     android:background="?android:attr/selectableItemBackground">
 
     <!-- 프로필 이미지 -->
@@ -37,6 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="역할"
+            android:layout_marginTop="6dp"
             android:textSize="14sp"
             android:textColor="@color/black"/>
     </LinearLayout>
