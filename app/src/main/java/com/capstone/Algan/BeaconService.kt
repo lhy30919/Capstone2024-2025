@@ -57,7 +57,7 @@ class BeaconService : Service(), BeaconConsumer {
         beaconManager.bind(this)
 
         // 신호 상태 확인 시작 (주석 처리, 지속적인 확인 필요 없음)
-        // handler.post(checkRunnable)
+         handler.post(checkRunnable)
     }
 
     override fun onBeaconServiceConnect() {
@@ -77,7 +77,7 @@ class BeaconService : Service(), BeaconConsumer {
                 Log.d("BeaconService", "비콘 감지됨! UUID: $uuid, Major: $major, Minor: $minor, $rssi")
 showToast("$rssi")
                 // 최초로 연결되었을 때만 상태 변경
-                if (BeaconState.isConnected.value != true && rssi>=-90) {
+                if (BeaconState.isConnected.value != true && rssi>=-95) {
                     BeaconState.setConnected(true)
                     showToast("비콘 연결됨! UUID: $uuid, Major: $major, Minor: $minor")
                 }

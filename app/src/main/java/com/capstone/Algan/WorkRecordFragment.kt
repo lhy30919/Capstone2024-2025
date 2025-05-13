@@ -1,12 +1,14 @@
 package com.capstone.Algan
 
 import android.app.DatePickerDialog
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log // 로그를 위해 추가
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -343,8 +345,25 @@ class WorkRecordFragment : Fragment() {
                     String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
                 onDateSelected(selectedDate)
             }, year, month, day)
-
+        Locale.setDefault(Locale.KOREA)
         datePickerDialog.show()
+        val positiveButton = datePickerDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        val negativeButton = datePickerDialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+        positiveButton?.text = "선택"
+        negativeButton?.text = "취소"
+// 색상
+        val blackColor = ContextCompat.getColor(requireContext(), R.color.black)
+        val grayCOlor = ContextCompat.getColor(requireContext(),R.color.secondary_text)
+        positiveButton?.setTextColor(blackColor)
+        negativeButton?.setTextColor(grayCOlor)
+
+// 글자 크기
+        positiveButton?.textSize = 18f
+        negativeButton?.textSize = 18f
+
+// 글자 굵게 (Typeface.BOLD 사용)
+        positiveButton?.setTypeface(null, Typeface.BOLD)
+        negativeButton?.setTypeface(null, Typeface.BOLD)
     }
 
     // RecyclerView 설정

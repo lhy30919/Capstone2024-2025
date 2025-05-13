@@ -2,7 +2,9 @@ package com.capstone.Algan
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -158,6 +160,7 @@ class DaeTaFragment : Fragment() {
     }
 
     private fun showDatePicker() { // 달력
+        Locale.setDefault(Locale.KOREA)
         val calendar = getInstance()
         val year = calendar.get(YEAR)
         val month = calendar.get(MONTH)
@@ -172,7 +175,7 @@ class DaeTaFragment : Fragment() {
             year, month, day
         )
 
-        datePickerDialog.setTitle("대타를 신청할 날짜를 선택하세요")
+        datePickerDialog.setTitle("대타 요청 날짜 선택")
         datePickerDialog.setOnShowListener {
             val titleId = requireContext().resources.getIdentifier("alertTitle", "id", "android")
             val titleView = datePickerDialog.findViewById<TextView>(titleId)
@@ -189,6 +192,24 @@ class DaeTaFragment : Fragment() {
         }
 
         datePickerDialog.show()
+
+        val positiveButton = datePickerDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        val negativeButton = datePickerDialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+        positiveButton?.text = "선택"
+        negativeButton?.text = "취소"
+// 색상
+        val blackColor = ContextCompat.getColor(requireContext(), R.color.black)
+        val grayCOlor = ContextCompat.getColor(requireContext(),R.color.secondary_text)
+        positiveButton?.setTextColor(blackColor)
+        negativeButton?.setTextColor(grayCOlor)
+
+// 글자 크기
+        positiveButton?.textSize = 18f
+        negativeButton?.textSize = 18f
+
+// 글자 굵게 (Typeface.BOLD 사용)
+        positiveButton?.setTypeface(null, Typeface.BOLD)
+        negativeButton?.setTypeface(null, Typeface.BOLD)
     }
 
 
@@ -220,9 +241,8 @@ class DaeTaFragment : Fragment() {
         endMinutePicker.maxValue = 59
 
         val dialog = AlertDialog.Builder(requireContext())
-            .setTitle("대타를 요청할 시간을 설정하세요")
             .setView(timePickerView)
-            .setPositiveButton("확인") { _, _ ->
+            .setPositiveButton("선택") { _, _ ->
                 val startHour = startHourPicker.value
                 val startMinute = startMinutePicker.value
                 val endHour = endHourPicker.value
@@ -239,7 +259,27 @@ class DaeTaFragment : Fragment() {
             .setNegativeButton("취소", null)
             .create()
 
+// 취소, 선택 버튼 폰트 지정
         dialog.show()
+
+        val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        val negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+
+// 색상
+        val blackColor = ContextCompat.getColor(requireContext(), R.color.black)
+        val grayCOlor = ContextCompat.getColor(requireContext(),R.color.secondary_text)
+        positiveButton?.setTextColor(blackColor)
+        negativeButton?.setTextColor(grayCOlor)
+
+// 글자 크기
+        positiveButton?.textSize = 18f
+        negativeButton?.textSize = 18f
+
+// 글자 굵게 (Typeface.BOLD 사용)
+        positiveButton?.setTypeface(null, Typeface.BOLD)
+        negativeButton?.setTypeface(null, Typeface.BOLD)
+
+
     }
 
     private fun addToSubstituteList(request: SubstituteRequest) {

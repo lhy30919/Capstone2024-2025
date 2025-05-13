@@ -3,6 +3,7 @@ package com.capstone.Algan
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Context
+import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,6 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +20,7 @@ import com.capstone.Algan.databinding.FragmentSalaryBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import java.util.Calendar
+import java.util.Locale
 
 class SalaryFragment : Fragment() {
 
@@ -82,6 +86,7 @@ class SalaryFragment : Fragment() {
 
         // 날짜 선택을 위한 DatePickerDialog 표시
         fun showDatePicker(onDateSelected: (String) -> Unit) {
+            Locale.setDefault(Locale.KOREA)
             val calendar = Calendar.getInstance()
             val year = calendar.get(Calendar.YEAR)
             val month = calendar.get(Calendar.MONTH)
@@ -93,6 +98,23 @@ class SalaryFragment : Fragment() {
             }, year, month, day)
 
             datePickerDialog.show()
+            val positiveButton = datePickerDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            val negativeButton = datePickerDialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+            positiveButton?.text = "선택"
+            negativeButton?.text = "취소"
+// 색상
+            val blackColor = ContextCompat.getColor(requireContext(), R.color.black)
+            val grayCOlor = ContextCompat.getColor(requireContext(),R.color.secondary_text)
+            positiveButton?.setTextColor(blackColor)
+            negativeButton?.setTextColor(grayCOlor)
+
+// 글자 크기
+            positiveButton?.textSize = 18f
+            negativeButton?.textSize = 18f
+
+// 글자 굵게 (Typeface.BOLD 사용)
+            positiveButton?.setTypeface(null, Typeface.BOLD)
+            negativeButton?.setTypeface(null, Typeface.BOLD)
         }
 
         // 날짜 선택을 위한 DatePickerDialog 설정
