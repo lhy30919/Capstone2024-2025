@@ -4,6 +4,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="light_background">#FFFFFF</color>
     <color name="light_gray_background">#F5F6FA</color>
+    <color name="light_pastel_blue">#D6E4FF</color>
     <color name="noticeboard_background">#EEEEEE</color>
     <color name="secondary_text">#757575</color>
     <color name="light_gray">#DDDDDD</color>

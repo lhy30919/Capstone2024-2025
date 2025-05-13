@@ -2,7 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="56dp">
+    android:backgroundTint="@color/noticeboard_background"
+    android:paddingTop="5dp">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -22,31 +23,55 @@
 
             />
         <!-- 시급 입력 및 공제 설정 -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="시급 입력"
-            android:textSize="16sp" />
-
-        <EditText
-            android:id="@+id/etHourlyRateWhole"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="시급을 입력하세요"
-            android:inputType="numberDecimal" />
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:background="@drawable/round_view"
+                android:backgroundTint="@color/light_pastel_blue"
+                android:gravity="center"
+                android:text="시급 입력"
+                android:textAlignment="center"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/etHourlyRateWhole"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:hint="시급을 입력하세요"
+                android:inputType="numberDecimal" />
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:background="@drawable/round_view"
+            android:backgroundTint="@color/light_pastel_blue"
+            android:gravity="center"
             android:text="공제 비율 (%)"
+            android:textAlignment="center"
             android:textSize="16sp" />
-
         <EditText
             android:id="@+id/etDeductionsWhole"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:hint="공제 비율을 입력하세요"
             android:inputType="numberDecimal" />
+    </LinearLayout>
 
         <CheckBox
             android:id="@+id/cbRate"
@@ -150,6 +175,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="설정" />
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/round_view"
+            android:gravity="center"
+            android:text="설정"
+            android:textStyle="bold" />
     </LinearLayout>
 </ScrollView>
