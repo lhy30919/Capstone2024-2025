@@ -10,6 +10,7 @@
     <color name="light_gray">#DDDDDD</color>
     <color name="primary_text">#212121</color>
     <color name="pastel_blue">#5B8FF9</color>
+    <color name="skyblue">#E1F6FF</color>
     <color name="primary_color">#4CAF50</color>
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryVariant">#3700B3</color>
