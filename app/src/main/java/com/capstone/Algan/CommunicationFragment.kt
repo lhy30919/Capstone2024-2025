@@ -25,6 +25,7 @@ import com.capstone.Algan.adapters.ChatAdapter
 import com.capstone.Algan.models.Message
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.firebase.storage.FirebaseStorage
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -37,6 +38,7 @@ class CommunicationFragment : Fragment() {
     private lateinit var imageViewPreview: ImageView
     private lateinit var chatAdapter: ChatAdapter
     private var selectedImageUri: Uri? = null
+    private val storage = FirebaseStorage.getInstance()
 
     private val messageList = mutableListOf<Message>()
 
@@ -76,7 +78,8 @@ class CommunicationFragment : Fragment() {
         imageViewPreview = view.findViewById(R.id.imageView_preview)
 
         // SharedPreferences 초기화
-        sharedPreferences = requireContext().getSharedPreferences("UserPreferences", Activity.MODE_PRIVATE)
+        sharedPreferences =
+            requireContext().getSharedPreferences("UserPreferences", Activity.MODE_PRIVATE)
 
         // 현재 로그인한 사용자 이름 가져오기 (FirebaseAuth 대신 SharedPreferences 활용)
         val currentUser = getSavedUserName()
@@ -123,23 +126,31 @@ class CommunicationFragment : Fragment() {
 
         buttonSend.setOnClickListener {
             if (!::userRole.isInitialized) {
-                Toast.makeText(requireContext(), "사용자 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "사용자 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.",
+                    Toast.LENGTH_SHORT
+                ).show()
                 return@setOnClickListener
             }
 
             val messageText = editTextMessage.text.toString()
             val currentUserName = getSavedUserName() // SharedPreferences에서 사용자 이름 가져오기
+            val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
 
-            if (messageText.isNotEmpty() || selectedImageUri != null) {
+            getProfileImageUrl(companyCode, currentUserId) { profileImageUrl ->
+
                 val message = Message(
                     content = messageText,
                     timestamp = getCurrentTimestamp(),
                     username = currentUserName,
-                    profileImageUrl = getProfileImageUrl(),
+                    profileImageUrl = profileImageUrl,
                     imageUri = selectedImageUri?.toString(),
-                    companyCode = companyCode
+                    companyCode = companyCode,
+                    userId = currentUserId  // 이 부분 추가
                 )
+
 
                 saveMessageToFirebase(message)
                 messageList.add(message)
@@ -150,10 +161,10 @@ class CommunicationFragment : Fragment() {
                 imageViewPreview.setImageDrawable(null)
                 imageViewPreview.visibility = View.GONE
                 recyclerView.scrollToPosition(messageList.size - 1)
-            } else {
-                Toast.makeText(requireContext(), "메시지를 입력해주세요.", Toast.LENGTH_SHORT).show()
             }
         }
+
+
         // 사진 첨부 버튼 클릭 처리
         buttonAttach.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -273,9 +284,18 @@ class CommunicationFragment : Fragment() {
         }
     }
     // 프로필 이미지 URL 가져오기
-    private fun getProfileImageUrl(): String {
-        return FirebaseAuth.getInstance().currentUser?.photoUrl?.toString() ?: "기본 이미지 URL"
+    private fun getProfileImageUrl(companyCode: String, userId: String, onComplete: (String) -> Unit) {
+        val ref = storage.reference.child("profile_images/$companyCode/$userId.jpg")
+
+        ref.downloadUrl
+            .addOnSuccessListener { uri ->
+                onComplete(uri.toString())  // 성공하면 URL 반환
+            }
+            .addOnFailureListener {
+                onComplete("기본 이미지 URL") // 실패 시 기본 이미지 URL 반환
+            }
     }
+
     private fun getImageUri(image: Any): Uri {
         val imageBitmap = image as Bitmap
         val path = MediaStore.Images.Media.insertImage(

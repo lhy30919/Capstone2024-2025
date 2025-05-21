@@ -2,11 +2,12 @@ package com.capstone.Algan.models
 
 data class Message(
     val content: String,
-    val timestamp: String,  // "yyyy-MM-dd HH:mm:ss" 형식
+    val timestamp: String,
     val username: String,
     val profileImageUrl: String,
     val imageUri: String? = null,
-    val companyCode: String
+    val companyCode: String,
+    val userId: String? = null
 ) {
-    constructor() : this("", "", "", "", null, "")
+    constructor() : this("", "", "", "", null, "", null)
 }

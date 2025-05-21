@@ -12,13 +12,16 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.capstone.Algan.R
 import com.capstone.Algan.models.Message
-import com.squareup.picasso.Picasso // 이미지 로딩 라이브러리
+import com.bumptech.glide.Glide
+import com.google.firebase.storage.FirebaseStorage
 
 class ChatAdapter(
     private val messageList: MutableList<Message>,
-    private val currentUser: String, // 현재 로그인한 사용자 이름
-    private val forceLeftGravity: Boolean = false // 왼쪽 정렬 강제 플래그
+    private val currentUser: String,
+    private val forceLeftGravity: Boolean = false
 ) : RecyclerView.Adapter<ChatAdapter.MessageViewHolder>() {
+
+    private val storage = FirebaseStorage.getInstance()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_message, parent, false)
@@ -28,65 +31,63 @@ class ChatAdapter(
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
         val message = messageList[position]
 
-        // 메시지 내용 및 사용자 이름 설정
-        holder.tvMessageContent.text = message.content ?: "" // null이면 빈 문자열 처리
+        holder.tvMessageContent.text = message.content ?: ""
         holder.tvMessageTimestamp.text = message.timestamp.toString()
         holder.tvUsername.text = message.username ?: ""
 
-        // 프로필 이미지 설정 (Picasso로 이미지 로딩)
-        if (!message.profileImageUrl.isNullOrEmpty()) {
-            Picasso.get().load(message.profileImageUrl).into(holder.btnProfile)
+        // Firebase Storage에서 프로필 사진 불러오기 (마이페이지 저장 경로와 동일)
+        if (!message.userId.isNullOrEmpty() && !message.companyCode.isNullOrEmpty()) {
+            val imageRef = storage.reference.child("profile_images/${message.companyCode}/${message.userId}.jpg")
+            imageRef.downloadUrl.addOnSuccessListener { uri ->
+                Glide.with(holder.btnProfile.context)
+                    .load(uri)
+                    .placeholder(R.drawable.baseline_person_2_24)
+                    .error(R.drawable.baseline_person_2_24)
+                    .into(holder.btnProfile)
+            }.addOnFailureListener {
+                // 실패 시 기본 이미지 보여줌
+                holder.btnProfile.setImageResource(R.drawable.baseline_person_2_24)
+            }
         } else {
-            holder.btnProfile.setImageResource(R.drawable.baseline_person_2_24) // 기본 아이콘
+            holder.btnProfile.setImageResource(R.drawable.baseline_person_2_24)
         }
 
         if (forceLeftGravity) {
-            // 왼쪽 정렬 강제
             holder.LinMessageitem.gravity = Gravity.START
             holder.btnDelete.visibility = View.GONE
         } else {
-            // 본인 메시지에만 삭제 버튼 표시
             if (message.username == currentUser) {
                 holder.btnDelete.visibility = View.VISIBLE
                 holder.btnDelete.setOnClickListener {
-                    if (messageList.size > position) { // 메시지가 리스트에 있을 경우만 삭제
+                    if (messageList.size > position) {
                         messageList.removeAt(position)
                         notifyItemRemoved(position)
                     }
                 }
-                // 현재 로그인한 사용자가 작성한 메시지의 레이아웃을 오른쪽 정렬
                 holder.LinMessageitem.gravity = Gravity.END
             } else {
                 holder.btnDelete.visibility = View.GONE
-                // 다른 사용자가 작성한 메시지의 레이아웃을 왼쪽 정렬
                 holder.LinMessageitem.gravity = Gravity.START
             }
         }
 
-        // 메시지에 이미지가 있을 경우 표시
-        if (!message.imageUri.isNullOrEmpty()) {//이미지가 비었지않으면= 있으면
-            holder.imageViewMessageImage.visibility = View.VISIBLE//이미지 뷰 보이게
-            if (message.content.isNullOrEmpty()) {//글이없으면
-                holder.tvMessageContent.visibility = View.GONE//글 뷰 안 보이게
-            } else {
-                holder.tvMessageContent.visibility = View.VISIBLE
-            }
-            Picasso.get().load(Uri.parse(message.imageUri)).into(holder.imageViewMessageImage)
+        if (!message.imageUri.isNullOrEmpty()) {
+            holder.imageViewMessageImage.visibility = View.VISIBLE
+            holder.tvMessageContent.visibility = if (message.content.isNullOrEmpty()) View.GONE else View.VISIBLE
+            Glide.with(holder.imageViewMessageImage.context)
+                .load(Uri.parse(message.imageUri))
+                .into(holder.imageViewMessageImage)
         } else {
             holder.tvMessageContent.visibility = View.VISIBLE
             holder.imageViewMessageImage.visibility = View.GONE
         }
     }
 
-    override fun getItemCount(): Int {
-        return messageList.size
-    }
+    override fun getItemCount(): Int = messageList.size
 
-    // RecyclerView 아이템이 재사용될 때 호출됨
     override fun onViewRecycled(holder: MessageViewHolder) {
         super.onViewRecycled(holder)
-        // Picasso에서 이미지 해제
-        Picasso.get().cancelRequest(holder.imageViewMessageImage)
+        Glide.with(holder.imageViewMessageImage.context).clear(holder.imageViewMessageImage)
         holder.imageViewMessageImage.setImageDrawable(null)
     }
 
@@ -96,9 +97,7 @@ class ChatAdapter(
         val tvUsername: TextView = itemView.findViewById(R.id.tvUsername)
         val btnProfile: ImageView = itemView.findViewById(R.id.btnProfile)
         val btnDelete: Button = itemView.findViewById(R.id.btnDelete)
-        val imageViewMessageImage: ImageView =
-            itemView.findViewById(R.id.imageViewMessageImage) // 이미지 뷰 추가
-        val LinMessageitem: LinearLayout =
-            itemView.findViewById(R.id.LinMessageitem) // LinearLayout 참조 추가
+        val imageViewMessageImage: ImageView = itemView.findViewById(R.id.imageViewMessageImage)
+        val LinMessageitem: LinearLayout = itemView.findViewById(R.id.LinMessageitem)
     }
 }

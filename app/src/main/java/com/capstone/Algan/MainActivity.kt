@@ -3,14 +3,22 @@ package com.capstone.Algan
 import android.app.Application
 import android.content.Intent
 import android.os.Bundle
-import android.view.WindowInsets
-import android.window.SplashScreen
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.capstone.Algan.fragments.NoticeBoardFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.FirebaseApp
+import com.google.firebase.messaging.FirebaseMessaging
+import android.util.Log
+import org.json.JSONObject
+//import com.android.volley.Request
+//import com.android.volley.toolbox.JsonObjectRequest
+//import com.android.volley.toolbox.Volley
+import android.content.Context
+
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -108,9 +116,45 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
+//fun sendMessageToOtherDevice(context: Context, message: String, recipientToken: String) {
+//    val json = JSONObject()
+//    val notification = JSONObject()
+//    notification.put("title", "새 메시지 도착")
+//    notification.put("body", message)
+//
+//    json.put("to", recipientToken)
+//    json.put("notification", notification)
+//
+//    val request = object : JsonObjectRequest(
+//        Request.Method.POST,
+//        "https://fcm.googleapis.com/fcm/send",
+//        json,
+//        { response -> Log.d("FCM", "성공: $response") },
+//        { error -> Log.e("FCM", "실패: $error") }
+//    ) {
+//        override fun getHeaders(): MutableMap<String, String> {
+//            return hashMapOf(
+//                "Authorization" to "key=AIzaSyBHI5fsY3xocEdrOrEDqfe03gHAM7VolcM",  // key= 붙여야 함
+//                "Content-Type" to "application/json"
+//            )
+//        }
+//    }
+//
+//
+//    Volley.newRequestQueue(context).add(request)
+//}
+
 class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         FirebaseApp.initializeApp(this)
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = task.result
+                Log.d("FCM Token", "토큰: $token")
+                // 🔽 Step 3로 이동
+              //  sendMessageToOtherDevice(this, "tlqkf","fwgM_zcERsyVFvWoACthI5:APA91bGPLboWGY01qIthB9u9UvYeTbRdXFGi2rAy9jB7kYR2zgVk_b0qc7nuZeTWO094MUOah4WOzUW_ZBBICKA9AwmBgC_OpREdhEICdXmpsnzWQjt74Lo")
+            }
+        }
     }
 }
